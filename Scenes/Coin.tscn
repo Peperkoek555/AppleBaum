@@ -1,0 +1,73 @@
+[gd_scene load_steps=37 format=2]
+
+[ext_resource path="res://Scripts/coin.gd" type="Script" id=1]
+[ext_resource path="res://Textures/candy_glow_1.png" type="Texture" id=2]
+[ext_resource path="res://Textures/candy_glow_2.png" type="Texture" id=3]
+[ext_resource path="res://Textures/acorn_gold_0.png" type="Texture" id=4]
+[ext_resource path="res://Textures/acorn_gold_1.png" type="Texture" id=5]
+[ext_resource path="res://Textures/acorn_gold_2.png" type="Texture" id=6]
+[ext_resource path="res://Textures/acorn_gold_3.png" type="Texture" id=7]
+[ext_resource path="res://Textures/acorn_gold_4.png" type="Texture" id=8]
+[ext_resource path="res://Textures/acorn_gold_5.png" type="Texture" id=9]
+[ext_resource path="res://Textures/acorn_gold_6.png" type="Texture" id=10]
+[ext_resource path="res://Textures/acorn_gold_7.png" type="Texture" id=11]
+[ext_resource path="res://Textures/acorn_gold_8.png" type="Texture" id=12]
+[ext_resource path="res://Textures/acorn_gold_9.png" type="Texture" id=13]
+[ext_resource path="res://Textures/acorn_gold_10.png" type="Texture" id=14]
+[ext_resource path="res://Textures/acorn_gold_11.png" type="Texture" id=15]
+[ext_resource path="res://Textures/acorn_gold_12.png" type="Texture" id=16]
+[ext_resource path="res://Textures/acorn_gold_13.png" type="Texture" id=17]
+[ext_resource path="res://Textures/acorn_gold_14.png" type="Texture" id=18]
+[ext_resource path="res://Textures/acorn_gold_15.png" type="Texture" id=19]
+[ext_resource path="res://Textures/acorn_gold_16.png" type="Texture" id=20]
+[ext_resource path="res://Textures/acorn_gold_17.png" type="Texture" id=21]
+[ext_resource path="res://Textures/acorn_gold_18.png" type="Texture" id=22]
+[ext_resource path="res://Textures/acorn_gold_19.png" type="Texture" id=23]
+[ext_resource path="res://Textures/acorn_gold_20.png" type="Texture" id=24]
+[ext_resource path="res://Textures/acorn_gold_21.png" type="Texture" id=25]
+[ext_resource path="res://Textures/acorn_gold_22.png" type="Texture" id=26]
+[ext_resource path="res://Textures/acorn_gold_23.png" type="Texture" id=27]
+[ext_resource path="res://Textures/acorn_gold_24.png" type="Texture" id=28]
+[ext_resource path="res://Textures/acorn_gold_25.png" type="Texture" id=29]
+[ext_resource path="res://Textures/acorn_gold_26.png" type="Texture" id=30]
+[ext_resource path="res://Textures/acorn_gold_27.png" type="Texture" id=31]
+[ext_resource path="res://Textures/acorn_gold_28.png" type="Texture" id=32]
+[ext_resource path="res://Textures/acorn_gold_29.png" type="Texture" id=33]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 7.89098
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 2 ), ExtResource( 3 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ), ExtResource( 33 ) ],
+"loop": true,
+"name": "acorn_gold",
+"speed": 20.0
+} ]
+
+[node name="Coin" type="Area2D" groups=[
+"coin",
+]]
+z_index = 1
+script = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Glow" type="AnimatedSprite" parent="."]
+frames = SubResource( 2 )
+playing = true
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 3 )
+animation = "acorn_gold"
+frame = 10
+playing = true
