@@ -4,13 +4,18 @@ var hspd : float = 0
 var sounds = [load("res://Sounds/game_over.wav"),
 			  load("res://Sounds/coin.wav")]
 var target_x : float
+const T_blink : int = 5
+var t_blink : int
+var t_blink_period : int
 
+onready var coinIcon = get_parent().get_node("GUI").get_node("Icon")
 onready var main = get_parent()
 onready var player = $AudioStreamPlayer2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	
+	t_blink = T_blink
 
 func _process(delta):
 	
@@ -22,20 +27,42 @@ func _process(delta):
 		hspd = 0
 		
 	move_acc()
+	blink()
+
+func blink() -> void:
+
+	if t_blink_period > 0:
+		t_blink_period -= 1
+		
+		if t_blink_period == 0:
+			$Blinking.frame = abs($AnimatedSprite.frame - 1)
+			$AnimatedSprite.hide()
+			$Blinking.show()
+		
+	else:
+		
+		if t_blink > 0:
+			t_blink -= 1
+		else:
+			t_blink = T_blink
+			t_blink_period = 90 + g.random(45)
+			$AnimatedSprite.frame = abs($Blinking.frame - 1)
+			$Blinking.hide()
+			$AnimatedSprite.show()
 
 func move_acc() -> void:
 	
 	hspd = abs(target_x - position.x) / 10.0
-	$Sprite.rotation_degrees = - sign(target_x - position.x) * abs(target_x - position.x) / 80 * 30
+	$AnimatedSprite.rotation_degrees = - sign(target_x - position.x) * abs(target_x - position.x) / 80 * 30
 
 func normal(x : float) -> float:
 	
 	var x_new = x
 	
-	if x_new < 6:
-		x_new = 6
-	elif x_new > 74:
-		x_new = 74
+	if x_new < 13:
+		x_new = 13
+	elif x_new > 147:
+		x_new = 147
 		
 	return x_new
 
@@ -45,10 +72,16 @@ func collide(area):
 		
 		if area.is_in_group("coin"):
 			
-			player.stream = sounds[1]
-			player.play()
-			main.score += 1
-			area.queue_free()
+			if !area.eaten:
+				player.stream = sounds[1]
+				player.play()
+				main.coins += g.coin_values[area.type]
+				
+				var prev_frame = coinIcon.frame
+				coinIcon.animation = g.coin_types[area.type]
+				coinIcon.frame = prev_frame + 1
+				
+				area.eaten = true
 				
 		elif area.is_in_group("enemy"):
 			

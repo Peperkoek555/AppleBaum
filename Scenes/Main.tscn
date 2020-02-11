@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Textures/Backgrounds/tree.png" type="Texture" id=2]
@@ -8,15 +8,55 @@
 [ext_resource path="res://Scenes/Apple.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Sounds/Music/test.wav" type="AudioStream" id=7]
 [ext_resource path="res://Scenes/MenuButton.tscn" type="PackedScene" id=8]
-[ext_resource path="res://Fonts/Extrude.ttf" type="DynamicFontData" id=9]
+[ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=9]
+[ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=10]
+[ext_resource path="res://Textures/acorn_silver_1.png" type="Texture" id=11]
+[ext_resource path="res://Textures/acorn_silver_2.png" type="Texture" id=12]
+[ext_resource path="res://Textures/acorn_silver_3.png" type="Texture" id=13]
+[ext_resource path="res://Textures/acorn_silver_4.png" type="Texture" id=14]
+[ext_resource path="res://Textures/acorn_silver_5.png" type="Texture" id=15]
+[ext_resource path="res://Textures/acorn_silver_6.png" type="Texture" id=16]
+[ext_resource path="res://Textures/acorn_silver_7.png" type="Texture" id=17]
+[ext_resource path="res://Textures/acorn_normal_0.png" type="Texture" id=18]
+[ext_resource path="res://Textures/acorn_normal_1.png" type="Texture" id=19]
+[ext_resource path="res://Textures/acorn_normal_2.png" type="Texture" id=20]
+[ext_resource path="res://Textures/acorn_normal_3.png" type="Texture" id=21]
+[ext_resource path="res://Textures/acorn_normal_4.png" type="Texture" id=22]
+[ext_resource path="res://Textures/acorn_normal_5.png" type="Texture" id=23]
+[ext_resource path="res://Textures/acorn_normal_6.png" type="Texture" id=24]
+[ext_resource path="res://Textures/acorn_normal_7.png" type="Texture" id=25]
+[ext_resource path="res://Textures/acorn_gold_0.png" type="Texture" id=26]
+[ext_resource path="res://Textures/acorn_gold_1.png" type="Texture" id=27]
+[ext_resource path="res://Textures/acorn_gold_2.png" type="Texture" id=28]
+[ext_resource path="res://Textures/acorn_gold_3.png" type="Texture" id=29]
+[ext_resource path="res://Textures/acorn_gold_4.png" type="Texture" id=30]
+[ext_resource path="res://Textures/acorn_gold_5.png" type="Texture" id=31]
+[ext_resource path="res://Textures/acorn_gold_6.png" type="Texture" id=32]
+[ext_resource path="res://Textures/acorn_gold_7.png" type="Texture" id=33]
 
-[sub_resource type="DynamicFont" id=1]
-font_data = ExtResource( 9 )
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ) ],
+"loop": true,
+"name": "acorn_silver",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ) ],
+"loop": true,
+"name": "acorn_normal",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ), ExtResource( 33 ) ],
+"loop": true,
+"name": "acorn_gold",
+"speed": 5.0
+} ]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="Tree" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
 centered = false
 __meta__ = {
@@ -24,19 +64,22 @@ __meta__ = {
 }
 
 [node name="Clouds" type="Sprite" parent="."]
-position = Vector2( 0, 19.717 )
+position = Vector2( 0, 41 )
+scale = Vector2( 2, 2 )
 z_index = -1
 texture = ExtResource( 3 )
 centered = false
 
 [node name="Clouds2" type="Sprite" parent="."]
-position = Vector2( -80, 19.717 )
+position = Vector2( -160, 41 )
+scale = Vector2( 2, 2 )
 z_index = -1
 texture = ExtResource( 4 )
 centered = false
 
 [node name="Tree2" type="Sprite" parent="."]
-position = Vector2( 0, 140 )
+position = Vector2( 0, 280 )
+scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
 centered = false
 __meta__ = {
@@ -44,6 +87,7 @@ __meta__ = {
 }
 
 [node name="Hills" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
 z_index = -2
 texture = ExtResource( 5 )
 centered = false
@@ -52,7 +96,7 @@ __meta__ = {
 }
 
 [node name="Apple" parent="." instance=ExtResource( 6 )]
-position = Vector2( 34.0191, 46.207 )
+position = Vector2( 34.0191, 64.207 )
 z_index = 1
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
@@ -69,28 +113,44 @@ enabled_focus_mode = 0
 
 [node name="GUI" type="Node2D" parent="."]
 z_index = 5
+z_as_relative = false
 
 [node name="ShowScore" type="Label" parent="GUI"]
-margin_top = 2.0
-margin_right = 31.0
+margin_left = 57.0
+margin_top = 1.0
+margin_right = 145.0
 margin_bottom = 19.0
-grow_horizontal = 2
-grow_vertical = 2
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "9"
-align = 1
-clip_text = true
-
-[node name="ShowHigh" type="Label" parent="GUI"]
-margin_left = 22.0
-margin_top = 2.0
-margin_right = 80.0
-margin_bottom = 19.0
-grow_horizontal = 2
-grow_vertical = 2
-custom_fonts/font = SubResource( 1 )
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 9 )
 custom_colors/font_color = Color( 0.270588, 0.207843, 0.207843, 1 )
-text = "HI: 9"
+text = "00"
 align = 2
-clip_text = true
+
+[node name="ShowCoins" type="Label" parent="GUI"]
+margin_left = 57.0
+margin_top = 18.0
+margin_right = 145.0
+margin_bottom = 36.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 9 )
+custom_colors/font_color = Color( 0.270588, 0.207843, 0.207843, 1 )
+text = "00"
+align = 2
+
+[node name="Icon" type="AnimatedSprite" parent="GUI"]
+position = Vector2( 152.632, 25.0321 )
+frames = SubResource( 1 )
+animation = "acorn_normal"
+frame = 7
+playing = true
+
+[node name="M" type="Label" parent="GUI"]
+margin_left = 143.0
+margin_top = 1.0
+margin_right = 159.0
+margin_bottom = 19.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 9 )
+custom_colors/font_color = Color( 0.270588, 0.207843, 0.207843, 1 )
+text = "M"
+align = 2

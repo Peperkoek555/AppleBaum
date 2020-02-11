@@ -6,5 +6,5 @@ func _process(delta) -> void:
 
 func move_eyes() -> void:
 	
-	$Eye0.rotation = get_local_mouse_position().angle()
-	$Eye1.rotation = get_local_mouse_position().angle()
+	$Eye0.rotation = get_parent().get_node("Apple").position.angle()
+	$Eye1.rotation = get_parent().get_node("Apple").position.angle()

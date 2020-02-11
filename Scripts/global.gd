@@ -4,6 +4,8 @@ const SAVE_PATH = "res://config.cfg"
 var _config_file = ConfigFile.new()
 
 var highscore : int = 0
+var coin_types = ["acorn_normal", "acorn_silver", "acorn_gold", "acorn_diamond"]
+var coin_values = [1, 3, 10, 50]
 
 func load_settings() -> void:
 	

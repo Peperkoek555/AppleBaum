@@ -1,13 +1,33 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Scripts/apple.gd" type="Script" id=1]
 [ext_resource path="res://Sounds/apple.wav" type="AudioStream" id=2]
 [ext_resource path="res://Textures/fruit_falling_0.png" type="Texture" id=3]
+[ext_resource path="res://Textures/fruit_falling_1.png" type="Texture" id=4]
+[ext_resource path="res://Textures/fruit_falling_blink_0.png" type="Texture" id=5]
+[ext_resource path="res://Textures/fruit_falling_blink_1.png" type="Texture" id=6]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 7.61839
 
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 3 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "default",
+"speed": 8.0
+} ]
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 5 ), ExtResource( 6 ) ],
+"loop": true,
+"name": "default",
+"speed": 8.0
+} ]
+
 [node name="Apple" type="Area2D"]
+scale = Vector2( 2, 2 )
 script = ExtResource( 1 )
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
@@ -17,6 +37,12 @@ stream = ExtResource( 2 )
 position = Vector2( 0, 1 )
 shape = SubResource( 1 )
 
-[node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 3 )
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 2 )
+frame = 1
+playing = true
+
+[node name="Blinking" type="AnimatedSprite" parent="."]
+visible = false
+frames = SubResource( 3 )
 [connection signal="area_entered" from="." to="." method="collide"]
