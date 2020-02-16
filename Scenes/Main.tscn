@@ -132,10 +132,21 @@ margin_top = 18.0
 margin_right = 145.0
 margin_bottom = 36.0
 grow_horizontal = 0
+rect_pivot_offset = Vector2( 103, 30.207 )
 custom_fonts/font = ExtResource( 9 )
 custom_colors/font_color = Color( 0.270588, 0.207843, 0.207843, 1 )
 text = "00"
 align = 2
+
+[node name="ShowArea" type="Label" parent="GUI"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 90.0
+margin_bottom = 20.0
+rect_pivot_offset = Vector2( 103, 30.207 )
+custom_fonts/font = ExtResource( 9 )
+custom_colors/font_color = Color( 0.270588, 0.207843, 0.207843, 1 )
+text = "FOREST"
 
 [node name="CoinIcon" type="AnimatedSprite" parent="GUI"]
 position = Vector2( 152.632, 25.0321 )

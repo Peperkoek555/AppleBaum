@@ -1,5 +1,6 @@
 extends Node2D
 
+var area : int = 0 # 0 = forest; 1 = snow; 2 = jungle
 var can_add_coin : bool = true
 var coin_chance : Array 
 var coin_icon_frame : int = 0
@@ -14,8 +15,11 @@ var room_width : int = 160
 var score : float
 var speed_cloud : int
 var speed_tree : int
+var t_area : int
+const T_area : int = 45*19
 var t_coin : int
 var t_enemy : int
+const T_enemy : int = 100
 var t_speed : int
 
 onready var clouds = [$Clouds, $Clouds2]
@@ -64,11 +68,12 @@ func init() -> void:
 	pivot_coin_position(true)
 	coins = 0
 	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
-	score = 2000
+	score = 0
 	speed_cloud = 10
 	speed_tree = 100
+	t_area = T_area
 	t_coin = 100
-	t_enemy = 100
+	t_enemy = T_enemy
 	
 	for i in get_children():
 		if i.is_in_group("coin") || i.is_in_group("enemy"):
@@ -137,7 +142,21 @@ func spawn_entities() -> void:
 #
 #		t_enemy = 25
 
+func update_area() -> void:
+	
+	if t_area > 0:
+		t_area -= 1
+	else:
+		var new_area = g.random(2)
+		while new_area == area:
+			new_area = g.random(2)
+		area = new_area
+		
+		t_area = T_area
+
 func update_background(delta) -> void:
+	
+	update_area()
 	
 	for i in tree:
 		i.position.y -= speed_tree * delta
@@ -174,6 +193,7 @@ func update_score(delta) -> void:
 	
 	show_score.text = str(stepify(score, 0.1))
 	show_coins.text = str(coins)
+	$GUI/ShowArea.text = "area 0" + str(area)
 	
 	# update coin frequency
 	if score >= coin_thres:
