@@ -1,8 +1,12 @@
 extends Node2D
 
 var can_add_coin : bool = true
+var coin_chance : Array 
+var coin_icon_frame : int = 0
 var coin_position : int
+var coin_rarity_bit : bool = true # whether a diamond can still join the queue (only 1 per)
 var coin_queue : int = 0
+var coin_thres : int = 20
 var coins : int
 var game_over : bool = false
 var room_height : int = 280
@@ -37,8 +41,16 @@ func _process(delta):
 	update_score(delta)
 
 func check_keyboard() -> void:
-	if Input.is_action_just_released("exit_game"):
+	if Input.is_action_just_released("game_exit"):
 		get_tree().quit()
+	if Input.is_action_just_released("game_restart"):
+		get_tree().reload_current_scene()
+	if Input.is_action_just_released("game_spd1"):
+		Engine.time_scale = 1
+	if Input.is_action_just_released("game_spd2"):
+		Engine.time_scale = 2
+	if Input.is_action_just_released("game_spd4"):
+		Engine.time_scale = 4
 
 func end_game() -> void:
 	
@@ -51,7 +63,8 @@ func init() -> void:
 	
 	pivot_coin_position(true)
 	coins = 0
-	score = 0
+	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
+	score = 2000
 	speed_cloud = 10
 	speed_tree = 100
 	t_coin = 100
@@ -83,6 +96,10 @@ func restart_game() -> void:
 	game_over = false
 	init()
 
+func set_coin_queue(value) -> void:
+	coin_queue = value
+	coin_rarity_bit = true
+
 func spawn_entities() -> void:
 	
 	if coin_queue > 0:
@@ -105,7 +122,7 @@ func spawn_entities() -> void:
 		else: 
 			t_coin = 30 + g.random(30)
 			pivot_coin_position(true)
-			if g.random(1) == 0: coin_queue = 4 + g.random(8)
+			if g.random(1) == 0: set_coin_queue(4 + g.random(8))
 	
 #	if t_enemy > 0:
 #		t_enemy -= 1
@@ -157,3 +174,16 @@ func update_score(delta) -> void:
 	
 	show_score.text = str(stepify(score, 0.1))
 	show_coins.text = str(coins)
+	
+	# update coin frequency
+	if score >= coin_thres:
+		for i in len(coin_chance):
+			if coin_chance[i] > 0:
+				coin_chance[i] -= 1
+		coin_thres += 20
+		
+	if coin_icon_frame < 96:
+		coin_icon_frame += 1
+	else:
+		coin_icon_frame = 0
+	$GUI/CoinIcon.frame = floor(coin_icon_frame / 12.0)

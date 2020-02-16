@@ -8,9 +8,23 @@ var t_death : float = 10
 func _ready():
 	
 	if get_parent().score >= 20:
-		if g.random(3) == 0:
-			type += 1
+		if g.random(get_parent().coin_chance[0]) == 0:
+			type = 1
 			$AnimatedSprite.animation = "acorn_silver"
+			$Glow.animation = "glow_silver"
+			$Glow.show()
+	if get_parent().score >= 40:
+		if g.random(get_parent().coin_chance[1]) == 0:
+			type = 2
+			$AnimatedSprite.animation = "acorn_gold"
+			$Glow.animation = "glow_gold"
+			$Glow.show()
+	if get_parent().score >= 60:
+		if g.random(get_parent().coin_chance[2]) == 0 && get_parent().coin_rarity_bit == true:
+			type = 3
+			get_parent().coin_rarity_bit = false
+			$AnimatedSprite.animation = "acorn_diamond"
+			$Glow.animation = "glow_diamond"
 			$Glow.show()
 	
 	size = get_node("AnimatedSprite").frames.get_frame("acorn_normal", 0).get_size() * scale

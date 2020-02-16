@@ -1,16 +1,27 @@
 extends Area2D
 
 var hspd : float = 0
-var sounds = [load("res://Sounds/game_over.wav"),
-			  load("res://Sounds/coin.wav")]
+var sounds_coin = [[load("res://Sounds/acorn0.wav"),
+				   load("res://Sounds/acorn1.wav"),
+				   load("res://Sounds/acorn2.wav"),
+				   load("res://Sounds/acorn3.wav"),],
+				  [load("res://Sounds/acorn_metal0x.wav"),
+				   load("res://Sounds/acorn_metal1x.wav"),
+				   load("res://Sounds/acorn_metal2x.wav"),
+				   load("res://Sounds/acorn_metal3x.wav"),
+				   load("res://Sounds/acorn_metal4x.wav"),],
+				  [load("res://Sounds/acorn_diamond0.wav")]]
+var sounds_game = [load("res://Sounds/game_over.wav")]
 var target_x : float
 const T_blink : int = 5
 var t_blink : int
 var t_blink_period : int
 
-onready var coinIcon = get_parent().get_node("GUI").get_node("Icon")
+onready var coinIcon = get_parent().get_node("GUI").get_node("CoinIcon")
 onready var main = get_parent()
-onready var player = $AudioStreamPlayer2D
+onready var playersAcorn = [$PlayerAcorn,
+							$PlayerAcornMetal,
+							$PlayerAcornDiamond]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -73,19 +84,19 @@ func collide(area):
 		if area.is_in_group("coin"):
 			
 			if !area.eaten:
-				player.stream = sounds[1]
-				player.play()
-				main.coins += g.coin_values[area.type]
 				
-				var prev_frame = coinIcon.frame
+				var type = int(area.type > 0) + int(area.type == 3)
+				playersAcorn[type].stream = g.choose(sounds_coin[type])
+				playersAcorn[type].play()
+				
+				main.coins += g.coin_values[area.type]
 				coinIcon.animation = g.coin_types[area.type]
-				coinIcon.frame = prev_frame + 1
 				
 				area.eaten = true
 				
 		elif area.is_in_group("enemy"):
 			
-			player.stream = sounds[0]
-			player.play()
+			$PlayerGeneral.stream = sounds_game[0]
+			$PlayerGeneral.play()
 			main.end_game()
 			hide()

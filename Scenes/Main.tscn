@@ -6,7 +6,7 @@
 [ext_resource path="res://Textures/Backgrounds/cloud1.png" type="Texture" id=4]
 [ext_resource path="res://Textures/Backgrounds/hills.png" type="Texture" id=5]
 [ext_resource path="res://Scenes/Apple.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Sounds/Music/test.wav" type="AudioStream" id=7]
+[ext_resource path="res://Sounds/Music/wood_theme.wav" type="AudioStream" id=7]
 [ext_resource path="res://Scenes/MenuButton.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=9]
 [ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=10]
@@ -137,12 +137,10 @@ custom_colors/font_color = Color( 0.270588, 0.207843, 0.207843, 1 )
 text = "00"
 align = 2
 
-[node name="Icon" type="AnimatedSprite" parent="GUI"]
+[node name="CoinIcon" type="AnimatedSprite" parent="GUI"]
 position = Vector2( 152.632, 25.0321 )
 frames = SubResource( 1 )
 animation = "acorn_normal"
-frame = 7
-playing = true
 
 [node name="M" type="Label" parent="GUI"]
 margin_left = 143.0
