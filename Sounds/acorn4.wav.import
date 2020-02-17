@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/acorn4.wav-1dcb2359f57132b89aad9c724c169b18.sample"
+
+[deps]
+
+source_file="res://Sounds/acorn4.wav"
+dest_files=[ "res://.import/acorn4.wav-1dcb2359f57132b89aad9c724c169b18.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/acorn3.wav-a119753b728b4fb1939f566dc045d32e.sample"
+
+[deps]
+
+source_file="res://Sounds/acorn3.wav"
+dest_files=[ "res://.import/acorn3.wav-a119753b728b4fb1939f566dc045d32e.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
