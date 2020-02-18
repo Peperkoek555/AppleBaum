@@ -82,7 +82,7 @@ func collide(area):
 				if area.type == 3:
 					$PlayerAcornDiamond.play()
 				else:
-					$PlayerAcorn.pitch_scale = 1 + (area.ordinal / 7.0)
+					$PlayerAcorn.pitch_scale = 2 + (area.ordinal / 12.0)
 					$PlayerAcorn.play()
 				
 				main.coins += g.coin_values[area.type]
