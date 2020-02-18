@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/audioclip-1582038515-2104.wav-eb2e0e3baecf43f49160d3bcece112e3.sample"
+
+[deps]
+
+source_file="res://Sounds/audioclip-1582038515-2104.wav"
+dest_files=[ "res://.import/audioclip-1582038515-2104.wav-eb2e0e3baecf43f49160d3bcece112e3.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
