@@ -8,5 +8,7 @@ func _process(delta) -> void:
 	if position.y + size.y / 2 > 0:
 		position.y -= get_parent().speed_tree * delta
 	else:
-		queue_free()
-		
+		destroy()
+
+func destroy() -> void:
+	queue_free()

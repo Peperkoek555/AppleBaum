@@ -5,7 +5,8 @@ var can_add_coin : bool = true
 var coin_chance : Array 
 var coin_icon_frame : int = 0
 var coin_position : int
-var coin_rarity_bit : bool = true # whether a diamond can still join the queue (only 1 per)
+var coin_rarity_bit : bool = true # whether a diamond can spawn
+var coin_order : int
 var coin_queue : int = 0
 var coin_thres : int = 20
 var coins : int
@@ -70,7 +71,7 @@ func init() -> void:
 	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
 	score = 0
 	speed_cloud = 10
-	speed_tree = 100
+	speed_tree = 125
 	t_area = T_area
 	t_coin = 100
 	t_enemy = T_enemy
@@ -103,7 +104,7 @@ func restart_game() -> void:
 
 func set_coin_queue(value) -> void:
 	coin_queue = value
-	coin_rarity_bit = true
+	coin_order = -1
 
 func spawn_entities() -> void:
 	
@@ -112,16 +113,18 @@ func spawn_entities() -> void:
 		if can_add_coin:
 			
 			can_add_coin = false
+			coin_order += 1
 			coin_queue -= 1
 			pivot_coin_position(false)
 			
 			var new_coin = load("res://Scenes/Coin.tscn").instance()
 			new_coin.position = Vector2(coin_position, room_height + 6)
+			new_coin.ordinal = coin_order
 			add_child(new_coin)
 		
 	else:
 		
-		if coin_queue <=0 && t_coin > 0:
+		if coin_queue <= 0 && t_coin > 0:
 			t_coin -= 1
 			
 		else: 
@@ -176,7 +179,7 @@ func update_background(delta) -> void:
 
 func update_game_speed() -> void:
 	
-	if t_speed < 50:
+	if t_speed < 70:
 		t_speed += 1
 	else:
 		t_speed = 0
@@ -198,7 +201,7 @@ func update_score(delta) -> void:
 	# update coin frequency
 	if score >= coin_thres:
 		for i in len(coin_chance):
-			if coin_chance[i] > 0:
+			if coin_chance[i] > 0 + int(i == 2):
 				coin_chance[i] -= 1
 		coin_thres += 20
 		

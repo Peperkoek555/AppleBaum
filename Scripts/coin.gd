@@ -2,6 +2,7 @@ extends "res://Scripts/entity.gd"
 
 var eaten : bool
 var passed : bool # whether the coin passed the threshold to let in a new coin
+var ordinal : int = 0
 var type : int = 0 # 0 = normal; 1 = silver; 2 = gold: 3 = diamond
 var t_death : float = 10
 
@@ -31,7 +32,7 @@ func _ready():
 
 func _process(delta) -> void:
 	
-	if !passed && position.y < 255:
+	if !passed && position.y < 265:
 		
 		passed = true
 		get_parent().can_add_coin = true
@@ -41,4 +42,8 @@ func _process(delta) -> void:
 			scale = Vector2((t_death / 10.0) * 2, (t_death / 10.0) * 2)
 			t_death -= 1
 		else:
-			queue_free()
+			destroy()
+
+func destroy() -> void:
+	if type == 3: get_parent().coin_rarity_bit = true
+	.destroy()

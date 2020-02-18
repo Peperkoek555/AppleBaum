@@ -1,10 +1,7 @@
 extends Area2D
 
 var hspd : float = 0
-var sounds_coin = [[load("res://Sounds/acorn0.wav"),
-				   load("res://Sounds/acorn1.wav"),
-				   load("res://Sounds/acorn2.wav"),
-				   load("res://Sounds/acorn3.wav"),],
+var sounds_coin = [load("res://Sounds/acorn0.wav"),
 				  [load("res://Sounds/acorn_metal0x.wav"),
 				   load("res://Sounds/acorn_metal1x.wav"),
 				   load("res://Sounds/acorn_metal2x.wav"),
@@ -19,9 +16,6 @@ var t_blink_period : int
 
 onready var coinIcon = get_parent().get_node("GUI").get_node("CoinIcon")
 onready var main = get_parent()
-onready var playersAcorn = [$PlayerAcorn,
-							$PlayerAcornMetal,
-							$PlayerAcornDiamond]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -85,9 +79,11 @@ func collide(area):
 			
 			if !area.eaten:
 				
-				var type = int(area.type > 0) + int(area.type == 3)
-				playersAcorn[type].stream = g.choose(sounds_coin[type])
-				playersAcorn[type].play()
+				if area.type == 3:
+					$PlayerAcornDiamond.play()
+				else:
+					$PlayerAcorn.pitch_scale = 1 + (area.ordinal / 7.0)
+					$PlayerAcorn.play()
 				
 				main.coins += g.coin_values[area.type]
 				coinIcon.animation = g.coin_types[area.type]
