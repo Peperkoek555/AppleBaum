@@ -11,17 +11,20 @@ var coin_queue : int = 0
 var coin_thres : int = 20
 var coins : int
 var game_over : bool = false
+var hazard_free : bool = true  # whether a new hazard can be spawn
+var hazard_type : int # 0 = falling apple; 1 = worm; 2 = ambush worm; 3 = giant work; 4 = area unique
 var room_height : int = 280
 var room_width : int = 160
 var score : float
 var speed_cloud : int
 var speed_tree : int
 var t_area : int
-const T_area : int = 45*19
 var t_coin : int
 var t_enemy : int
-const T_enemy : int = 100
+var t_hazard : int
 var t_speed : int
+const T_area : int = 45*19
+const T_enemy : int = 100
 
 onready var clouds = [$Clouds, $Clouds2]
 onready var tree = [$Tree, $Tree2]
@@ -77,7 +80,7 @@ func init() -> void:
 	t_enemy = T_enemy
 	
 	for i in get_children():
-		if i.is_in_group("coin") || i.is_in_group("enemy"):
+		if i.is_in_group("coin") || i.is_in_group("hazard"):
 			i.queue_free()
 	
 	$Apple.show()
@@ -108,6 +111,11 @@ func set_coin_queue(value) -> void:
 
 func spawn_entities() -> void:
 	
+	spawn_entities_coins()
+	spawn_entities_hazards()
+	
+func spawn_entities_coins() -> void:
+	
 	if coin_queue > 0:
 		
 		if can_add_coin:
@@ -131,19 +139,18 @@ func spawn_entities() -> void:
 			t_coin = 30 + g.random(30)
 			pivot_coin_position(true)
 			if g.random(1) == 0: set_coin_queue(4 + g.random(8))
+
+func spawn_entities_hazards() -> void:
 	
-#	if t_enemy > 0:
-#		t_enemy -= 1
-#
-#	else:
-#
-#		if g.random(6 - int(score > 50) - int(score > 100) - int(score > 150)) == 0:
-#
-#			var new_enemy = load("res://Scenes/Enemy.tscn").instance()
-#			new_enemy.position = Vector2(8 + g.random(room_width - 16), 148)
-#			add_child(new_enemy)
-#
-#		t_enemy = 25
+	if hazard_free:
+		
+		if t_hazard < 60:
+			t_hazard += 1
+		else:
+			t_hazard = 0
+			
+			hazard_free = false
+			
 
 func update_area() -> void:
 	

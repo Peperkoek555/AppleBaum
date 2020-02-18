@@ -5,10 +5,14 @@ onready var size : Vector2 # the physical size of the entity
 
 func _process(delta) -> void:
 	
-	if position.y + size.y / 2 > 0:
-		position.y -= get_parent().speed_tree * delta
-	else:
-		destroy()
+	move(delta)
 
 func destroy() -> void:
 	queue_free()
+
+func move(delta) -> void:
+	
+	if position.y - size.y / 2 > 0:
+		position.y -= main.speed_tree * delta
+	else:
+		destroy()

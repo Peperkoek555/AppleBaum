@@ -3,26 +3,26 @@
 [ext_resource path="res://Scripts/coin.gd" type="Script" id=1]
 [ext_resource path="res://Textures/candy_glow_diamond_1.png" type="Texture" id=2]
 [ext_resource path="res://Textures/candy_glow_diamond_2.png" type="Texture" id=3]
-[ext_resource path="res://Textures/candy_glow_1.png" type="Texture" id=4]
-[ext_resource path="res://Textures/candy_glow_2.png" type="Texture" id=5]
-[ext_resource path="res://Textures/candy_glow_silver_1.png" type="Texture" id=6]
-[ext_resource path="res://Textures/candy_glow_silver_2.png" type="Texture" id=7]
-[ext_resource path="res://Textures/acorn_diamond_0.png" type="Texture" id=8]
-[ext_resource path="res://Textures/acorn_diamond_1.png" type="Texture" id=9]
-[ext_resource path="res://Textures/acorn_diamond_2.png" type="Texture" id=10]
-[ext_resource path="res://Textures/acorn_diamond_3.png" type="Texture" id=11]
-[ext_resource path="res://Textures/acorn_diamond_4.png" type="Texture" id=12]
-[ext_resource path="res://Textures/acorn_diamond_5.png" type="Texture" id=13]
-[ext_resource path="res://Textures/acorn_diamond_6.png" type="Texture" id=14]
-[ext_resource path="res://Textures/acorn_diamond_7.png" type="Texture" id=15]
-[ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=16]
-[ext_resource path="res://Textures/acorn_silver_1.png" type="Texture" id=17]
-[ext_resource path="res://Textures/acorn_silver_2.png" type="Texture" id=18]
-[ext_resource path="res://Textures/acorn_silver_3.png" type="Texture" id=19]
-[ext_resource path="res://Textures/acorn_silver_4.png" type="Texture" id=20]
-[ext_resource path="res://Textures/acorn_silver_5.png" type="Texture" id=21]
-[ext_resource path="res://Textures/acorn_silver_6.png" type="Texture" id=22]
-[ext_resource path="res://Textures/acorn_silver_7.png" type="Texture" id=23]
+[ext_resource path="res://Textures/candy_glow_silver_1.png" type="Texture" id=4]
+[ext_resource path="res://Textures/candy_glow_silver_2.png" type="Texture" id=5]
+[ext_resource path="res://Textures/candy_glow_1.png" type="Texture" id=6]
+[ext_resource path="res://Textures/candy_glow_2.png" type="Texture" id=7]
+[ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=8]
+[ext_resource path="res://Textures/acorn_silver_1.png" type="Texture" id=9]
+[ext_resource path="res://Textures/acorn_silver_2.png" type="Texture" id=10]
+[ext_resource path="res://Textures/acorn_silver_3.png" type="Texture" id=11]
+[ext_resource path="res://Textures/acorn_silver_4.png" type="Texture" id=12]
+[ext_resource path="res://Textures/acorn_silver_5.png" type="Texture" id=13]
+[ext_resource path="res://Textures/acorn_silver_6.png" type="Texture" id=14]
+[ext_resource path="res://Textures/acorn_silver_7.png" type="Texture" id=15]
+[ext_resource path="res://Textures/acorn_diamond_0.png" type="Texture" id=16]
+[ext_resource path="res://Textures/acorn_diamond_1.png" type="Texture" id=17]
+[ext_resource path="res://Textures/acorn_diamond_2.png" type="Texture" id=18]
+[ext_resource path="res://Textures/acorn_diamond_3.png" type="Texture" id=19]
+[ext_resource path="res://Textures/acorn_diamond_4.png" type="Texture" id=20]
+[ext_resource path="res://Textures/acorn_diamond_5.png" type="Texture" id=21]
+[ext_resource path="res://Textures/acorn_diamond_6.png" type="Texture" id=22]
+[ext_resource path="res://Textures/acorn_diamond_7.png" type="Texture" id=23]
 [ext_resource path="res://Textures/acorn_gold_0.png" type="Texture" id=24]
 [ext_resource path="res://Textures/acorn_gold_1.png" type="Texture" id=25]
 [ext_resource path="res://Textures/acorn_gold_2.png" type="Texture" id=26]
@@ -52,12 +52,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
 "loop": true,
-"name": "glow_gold",
+"name": "glow_silver",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 6 ), ExtResource( 7 ) ],
 "loop": true,
-"name": "glow_silver",
+"name": "glow_gold",
 "speed": 5.0
 } ]
 
@@ -65,12 +65,12 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ) ],
 "loop": true,
-"name": "acorn_diamond",
+"name": "acorn_silver",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ) ],
 "loop": true,
-"name": "acorn_silver",
+"name": "acorn_diamond",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ) ],
@@ -85,6 +85,7 @@ animations = [ {
 } ]
 
 [node name="Coin" type="Area2D" groups=[
+"idle",
 "coin",
 ]]
 scale = Vector2( 2, 2 )
@@ -98,10 +99,11 @@ shape = SubResource( 1 )
 visible = false
 frames = SubResource( 2 )
 animation = "glow_silver"
+frame = 1
 playing = true
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 3 )
 animation = "acorn_normal"
-frame = 6
+frame = 5
 playing = true
