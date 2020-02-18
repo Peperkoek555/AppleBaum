@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scripts/apple.gd" type="Script" id=1]
-[ext_resource path="res://Sounds/acorn_tmp.wav" type="AudioStream" id=2]
+[ext_resource path="res://Sounds/audioclip-1582038517-2339.wav" type="AudioStream" id=2]
 [ext_resource path="res://Sounds/acorn_diamond0.wav" type="AudioStream" id=3]
 [ext_resource path="res://Textures/fruit_falling_0.png" type="Texture" id=4]
 [ext_resource path="res://Textures/fruit_falling_1.png" type="Texture" id=5]
