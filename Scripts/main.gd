@@ -27,7 +27,7 @@ const T_area : int = 45*19
 const T_enemy : int = 100
 
 onready var clouds = [$Clouds, $Clouds2]
-onready var tree = [$Tree, $Tree2]
+onready var tree = [$Tree, $Tree2,$Tree3,$Tree4]
 onready var show_score = $GUI/ShowScore
 onready var show_coins = $GUI/ShowCoins
 
