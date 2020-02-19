@@ -12,7 +12,7 @@ func destroy() -> void:
 
 func move(delta) -> void:
 	
-	if position.y - size.y / 2 > 0:
+	if position.y + size.y > 0:
 		position.y -= main.speed_tree * delta
 	else:
 		destroy()

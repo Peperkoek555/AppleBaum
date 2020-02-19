@@ -1,13 +1,6 @@
 extends Area2D
 
 var hspd : float = 0
-var sounds_coin = [load("res://Sounds/acorn_tmp.wav"),
-				  [load("res://Sounds/acorn_metal0x.wav"),
-				   load("res://Sounds/acorn_metal1x.wav"),
-				   load("res://Sounds/acorn_metal2x.wav"),
-				   load("res://Sounds/acorn_metal3x.wav"),
-				   load("res://Sounds/acorn_metal4x.wav"),],
-				  [load("res://Sounds/acorn_diamond0.wav")]]
 var sounds_game = [load("res://Sounds/game_over.wav")]
 var target_x : float
 const T_blink : int = 5
@@ -82,7 +75,14 @@ func collide(area):
 				if area.type == 3:
 					$PlayerAcornDiamond.play()
 				else:
-					$PlayerAcorn.pitch_scale = 1 + (area.ordinal / 12.0)
+					
+					if area.queue_id == main.coin_queue_last:
+						main.coin_pitch += 1 / 12.0
+					else:
+						main.coin_pitch = 1.0
+						main.coin_queue_last = area.queue_id
+						
+					$PlayerAcorn.pitch_scale = main.coin_pitch
 					$PlayerAcorn.play()
 				
 				main.coins += g.coin_values[area.type]

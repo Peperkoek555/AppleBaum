@@ -7,7 +7,10 @@ var coin_icon_frame : int = 0
 var coin_position : int
 var coin_rarity_bit : bool = true # whether a diamond can spawn
 var coin_order : int
+var coin_pitch : float = 1
 var coin_queue : int = 0
+var coin_queue_id : int = -1
+var coin_queue_last : int # the last queue (id) eaten from
 var coin_thres : int = 20
 var coins : int
 var game_over : bool = false
@@ -91,14 +94,14 @@ func init() -> void:
 func pivot_coin_position(scramble : bool) -> void:
 	
 	if scramble:
-		coin_position = 10 + 20 * g.random(7)
+		coin_position = 20 * g.random(7)
 	elif g.random(2) == 0:
 		coin_position += g.choose([-20, 20])
 		
-	if coin_position < 10:
-		coin_position = 10
-	if coin_position > 150:
-		coin_position = 150
+	if coin_position < 0:
+		coin_position = 0
+	if coin_position > room_width:
+		coin_position = room_width
 
 func restart_game() -> void:
 	
@@ -107,6 +110,9 @@ func restart_game() -> void:
 
 func set_coin_queue(value) -> void:
 	coin_queue = value
+	coin_queue_id = (coin_queue_id + 1) % 3
+	if coin_queue_id == coin_queue_last:
+		coin_queue_last = -1
 	coin_order = -1
 
 func spawn_entities() -> void:
@@ -126,8 +132,9 @@ func spawn_entities_coins() -> void:
 			pivot_coin_position(false)
 			
 			var new_coin = load("res://Scenes/Coin.tscn").instance()
-			new_coin.position = Vector2(coin_position, room_height + 6)
 			new_coin.ordinal = coin_order
+			new_coin.position = Vector2(coin_position, room_height + 6)
+			new_coin.queue_id = coin_queue_id
 			add_child(new_coin)
 		
 	else:
@@ -149,8 +156,11 @@ func spawn_entities_hazards() -> void:
 		else:
 			t_hazard = 0
 			
-			hazard_free = false
+			var new_hazard_apple = load("res://Scenes/HazardApple.tscn").instance()
+			new_hazard_apple.position = Vector2(g.random(4) * 32, -32)
+			add_child(new_hazard_apple)
 			
+			hazard_free = false
 
 func update_area() -> void:
 	
