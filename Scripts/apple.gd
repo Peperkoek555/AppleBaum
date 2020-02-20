@@ -1,6 +1,8 @@
 extends Area2D
 
 var hspd : float = 0
+var sounds_acorn = [load("res://Sounds/acorn0.wav"),
+					load("res://Sounds/complete_queue0.wav")]
 var sounds_game = [load("res://Sounds/game_over.wav")]
 var target_x : float
 const T_blink : int = 5
@@ -71,19 +73,14 @@ func collide(area):
 		if area.is_in_group("coin"):
 			
 			if !area.eaten:
-				
-				if area.type == 3:
-					$PlayerAcornDiamond.play()
-				else:
 					
-					if area.queue_id == main.coin_queue_last:
-						main.coin_pitch += 1 / 12.0
-					else:
-						main.coin_pitch = 1.0
-						main.coin_queue_last = area.queue_id
-						
-					$PlayerAcorn.pitch_scale = main.coin_pitch
-					$PlayerAcorn.play()
+				if area.queue_id == main.coin_queue_last:
+					main.coin_pitch += 1 / 12.0
+				else:
+					main.coin_pitch = 1.0
+					main.coin_queue_last = area.queue_id
+				
+				play_sound_for_acorn(area)
 				
 				main.coins += g.coin_values[area.type]
 				coinIcon.animation = g.coin_types[area.type]
@@ -96,3 +93,19 @@ func collide(area):
 			$PlayerGeneral.play()
 			main.end_game()
 			hide()
+
+func play_sound_for_acorn(area):
+	
+	if area.type == 3:
+		$PlayerAcornDiamond.play()
+	else:
+		$PlayerAcorn.stream = sounds_acorn[0]
+		$PlayerAcorn.pitch_scale = main.coin_pitch
+		$PlayerAcorn.play()
+		
+	if main.coin_queue_left[area.queue_id] > 1:
+		main.coin_queue_left[area.queue_id] -= 1
+	else:
+		$PlayerAcorn.stream = sounds_acorn[1]
+		$PlayerAcorn.pitch_scale = 1
+		$PlayerAcorn.play()
