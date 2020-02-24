@@ -38,11 +38,24 @@ func check_flip(angle : float) -> bool:
 		return false
 
 # returns random value from given list
-# @pre list is NOT empty
-func choose(list): 
+# @pre 'list' is NOT empty
+func choose(list : Array): 
 	return list[random(len(list) - 1)]
 
-func db(percentage : float) -> float: # returns decibel value of given percentage
+# returns an index number from [0, len(weights)[, with respect to the given chance weights 
+# 	(higher weight = higher chance to be picked)
+# @pre 'weights' is NOT empty
+func choose_weighted(weights : Array) -> int:
+	var chancevar = random(sum(weights) - 1)
+	var cumsum = 0
+	for i in weights:
+		cumsum += i
+		if chancevar < i:
+			return weights.find(i)
+	return -1
+
+# returns decibel value of given percentage
+func db(percentage : float) -> float: 
 	return 20 * (log(percentage) / log(10))
 
 func get_position_centered(position : Vector2, size : Vector2) -> Vector2: # calculates the position as centered around a given point
@@ -62,8 +75,18 @@ func normal(angle : float) -> float:
 	while (check_angle < 0): check_angle += (2*PI)
 	return check_angle
 
-func random(n : int) -> int: # returns an integer between 0 and n, inclusive
+# returns an integer between 0 and n, inclusive
+func random(n : int) -> int:
 	return randi() % (n + 1)
 
-func randomf(n : float) -> float: # returns a float between 0 and n, inclusive
+# returns a float between 0 and n, inclusive
+func randomf(n : float) -> float: 
 	return randf() * n
+
+# returns the sum of all elements from the given list
+# @pre 'list' only contains integer values
+func sum(list : Array) -> int:
+	var sum = 0
+	for i in list:
+		sum += i
+	return sum

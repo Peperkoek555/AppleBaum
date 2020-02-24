@@ -1,6 +1,7 @@
 extends Node2D
 
 var area : int = 0 # 0 = forest; 1 = snow; 2 = jungle
+var branch_worm_type : int # -1 = none; 0 = idle; 1 = moving; 2 = ambush
 var can_add_coin : bool = true
 var coin_chance : Array 
 var coin_icon_frame : int = 0
@@ -16,23 +17,35 @@ var coins : int
 var game_over : bool = false
 var hazard_free : bool = true  # whether a new hazard can be spawn
 var hazard_type : int # 0 = falling apple; 1 = worm; 2 = ambush worm; 3 = giant work; 4 = area unique
+var hazard_weights : Array = [10, 10]
+	# [hazardApple, hazardWorm, hazardBigWorm, hazardSpecial] 
 var room_height : int = 280
 var room_width : int = 160
 var score : float
 var speed_cloud : int
 var speed_tree : int
 var t_area : int
+var t_branch : int
 var t_coin : int
 var t_enemy : int
 var t_hazard : int
 var t_speed : int
-const T_area : int = 45*19
+var t_warning : int
+const T_area : int = 2500
 const T_enemy : int = 100
 
-onready var clouds = [$Clouds, $Clouds2]
-onready var tree = [$Tree, $Tree2,$Tree3,$Tree4]
+onready var branch_types = [load("res://Textures/Backgrounds/branch_0.png"),
+							load("res://Textures/Backgrounds/branch_1.png")]
+onready var branches = [$Background/Branch, $Background/Branch2,
+						$Background/Branch3,$Background/Branch4]
+onready var clouds = [$Background/Clouds, $Background/Clouds2]
+onready var tree = [$Background/Tree, $Background/Tree2, $Background/Tree3, $Background/Tree4]
+onready var treeback1 = [$Background/Back, $Background/Back4]
+onready var treeback2 = [$Background/Back2, $Background/Back5]
+onready var treeback3 = [$Background/Back3, $Background/Back6]
 onready var show_score = $GUI/ShowScore
 onready var show_coins = $GUI/ShowCoins
+onready var warning = $GUI/WarningSign
 
 func _ready():
 	
@@ -50,6 +63,7 @@ func _process(delta):
 	update_background(delta)
 	update_music()
 	update_score(delta)
+	update_timers()
 
 func check_keyboard() -> void:
 	if Input.is_action_just_released("game_exit"):
@@ -86,6 +100,14 @@ func init() -> void:
 		if i.is_in_group("coin") || i.is_in_group("hazard"):
 			i.queue_free()
 	
+	for i in range(0, len(branches)):
+		
+		if i == 0:
+			branches[0].position.y = g.random(room_height)
+		else: branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
+		
+		branches[i].texture = g.choose(branch_types)
+	
 	$Apple.show()
 	$Restart.hide()
 	
@@ -100,8 +122,8 @@ func pivot_coin_position(scramble : bool) -> void:
 		
 	if coin_position < 0:
 		coin_position = 0
-	if coin_position > room_width:
-		coin_position = room_width
+	if coin_position > room_width - 20:
+		coin_position = room_width - 20
 
 func restart_game() -> void:
 	
@@ -115,12 +137,18 @@ func set_coin_queue(value) -> void:
 	if coin_queue_id == coin_queue_last:
 		coin_queue_last = -1
 
+func show_warning(pos : Vector2) -> void:
+	
+	warning.show()
+	warning.position = pos
+	t_warning = 60
+
 func spawn_entities() -> void:
 	
-	spawn_entities_coins()
-	spawn_entities_hazards()
+	spawn_coins()
+	spawn_hazards()
 	
-func spawn_entities_coins() -> void:
+func spawn_coins() -> void:
 	
 	if coin_queue > 0:
 		
@@ -145,7 +173,7 @@ func spawn_entities_coins() -> void:
 			pivot_coin_position(true)
 			if g.random(1) == 0: set_coin_queue(4 + g.random(8))
 
-func spawn_entities_hazards() -> void:
+func spawn_hazards() -> void:
 	
 	if hazard_free:
 		
@@ -154,11 +182,27 @@ func spawn_entities_hazards() -> void:
 		else:
 			t_hazard = 0
 			
-			var new_hazard_apple = load("res://Scenes/HazardApple.tscn").instance()
-			new_hazard_apple.position = Vector2(g.random(4) * 32, -32)
-			add_child(new_hazard_apple)
+			match(g.choose_weighted(hazard_weights)):
+				
+				0: spawn_hazards_apple()
+				1: spawn_hazards_worm(g.random(2))
 			
 			hazard_free = false
+
+func spawn_hazards_apple() -> void:
+	
+	var xpos = g.random(4) * 32
+			
+	show_warning(Vector2(xpos + 16, 32))
+	
+	var new_hazard_apple = load("res://Scenes/HazardApple.tscn").instance()
+	new_hazard_apple.position = Vector2(xpos, -180)
+	add_child(new_hazard_apple)
+
+# @param type: 0 = idle; 1 = moving; 2 = ambush
+func spawn_hazards_worm(type : int) -> void:
+	
+	branch_worm_type = type
 
 func update_area() -> void:
 	
@@ -169,17 +213,14 @@ func update_area() -> void:
 		while new_area == area:
 			new_area = g.random(2)
 		area = new_area
+		$MusicPlayer.stream = load("res://Sounds/Music/soundtrack" + str(area) + ".wav")
 		
 		t_area = T_area
 
 func update_background(delta) -> void:
 	
 	update_area()
-	
-	for i in tree:
-		i.position.y -= speed_tree * delta
-		if i.position.y <= -room_height:
-			i.position.y += room_height * 2
+	update_background_tree(delta)
 			
 	for i in clouds:
 		i.position.x += speed_cloud * delta
@@ -191,6 +232,35 @@ func update_background(delta) -> void:
 			speed_tree -= 2
 		else:
 			speed_tree = 0
+
+func update_background_tree(delta) -> void:
+	
+	# trunk movement
+	for i in tree:
+		i.position.y -= speed_tree * delta
+		if i.position.y <= -room_height:
+			i.position.y += room_height * 2
+			
+	# backtree movement
+	for i in treeback1:
+		i.position.y -= speed_tree * delta * (60.0 / 100)
+		if i.position.y <= -room_height:
+			i.position.y += room_height * 2
+	for i in treeback2:
+		i.position.y -= speed_tree * delta * (50.0 / 100)
+		if i.position.y <= -room_height:
+			i.position.y += room_height * 2
+	for i in treeback3:
+		i.position.y -= speed_tree * delta * (40.0 / 100)
+		if i.position.y <= -room_height:
+			i.position.y += room_height * 2
+	
+	# branch movement
+	for i in branches:
+		i.position.y -= speed_tree * delta
+		if i.position.y <= -111:
+			i.position.y = branches[(branches.find(i) - 1 % 4)].position.y + (110 + g.random(100))
+			i.texture = g.choose(branch_types)
 
 func update_game_speed() -> void:
 	
@@ -225,3 +295,12 @@ func update_score(delta) -> void:
 	else:
 		coin_icon_frame = 0
 	$GUI/CoinIcon.frame = floor(coin_icon_frame / 12.0)
+
+func update_timers() -> void:
+	
+	if t_warning != -1:
+		if t_warning > 0:
+			t_warning -= 1
+		else:
+			t_warning = -1
+			warning.hide()
