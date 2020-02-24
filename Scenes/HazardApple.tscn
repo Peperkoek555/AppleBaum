@@ -30,4 +30,5 @@ shape = SubResource( 1 )
 position = Vector2( 8, 8 )
 frames = SubResource( 2 )
 animation = "acorn_gold"
+frame = 1
 playing = true
