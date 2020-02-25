@@ -34,8 +34,12 @@ var t_warning : int
 const T_area : int = 2500
 const T_enemy : int = 100
 
-onready var branch_types = [load("res://Textures/Backgrounds/branch_0.png"),
-							load("res://Textures/Backgrounds/branch_1.png")]
+onready var branch_types = [[load("res://Textures/Backgrounds/branch_0.png"),
+							 load("res://Textures/Backgrounds/branch_1.png")],
+							[load("res://Textures/Backgrounds/branch_winter_0.png"),
+							 load("res://Textures/Backgrounds/branch_winter_1.png")],
+							[load("res://Textures/Backgrounds/branch_0.png"),
+							 load("res://Textures/Backgrounds/branch_1.png")]]
 onready var branches = [$Background/Branch, $Background/Branch2,
 						$Background/Branch3,$Background/Branch4]
 onready var clouds = [$Background/Clouds, $Background/Clouds2]
@@ -86,6 +90,8 @@ func end_game() -> void:
 
 func init() -> void:
 	
+	set_area(1)
+	
 	pivot_coin_position(true)
 	coins = 0
 	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
@@ -106,7 +112,7 @@ func init() -> void:
 			branches[0].position.y = g.random(room_height)
 		else: branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
 		
-		branches[i].texture = g.choose(branch_types)
+		branches[i].texture = g.choose(branch_types[area])
 	
 	$Apple.show()
 	$Restart.hide()
@@ -130,10 +136,40 @@ func restart_game() -> void:
 	game_over = false
 	init()
 
-func set_coin_queue(value) -> void:
-	coin_queue = value
+func set_area(new_area : int) -> void:
+	
+	area = new_area
+	
+	$MusicPlayer.stream = load("res://Sounds/Music/soundtrack" + str(new_area) + ".wav")
+	
+	match area:
+		
+		0:
+			$Background/Canvas.texture = load("res://Textures/Backgrounds/back_forest_3.png")
+			for i in tree:
+				i.texture = load("res://Textures/Backgrounds/bark.png")
+			for i in treeback1:
+				i.texture = load("res://Textures/Backgrounds/back_forest_0.png")
+			for i in treeback2:
+				i.texture = load("res://Textures/Backgrounds/back_forest_1.png")
+			for i in treeback3:
+				i.texture = load("res://Textures/Backgrounds/back_forest_2.png")
+				i.show()
+		1:
+			$Background/Canvas.texture = load("res://Textures/Backgrounds/back_winter_3.png")
+			for i in tree:
+				i.texture = load("res://Textures/Backgrounds/bark_winter.png")
+			for i in treeback1:
+				i.texture = load("res://Textures/Backgrounds/back_winter_0.png")
+			for i in treeback2:
+				i.texture = load("res://Textures/Backgrounds/back_winter_1.png")
+			for i in treeback3:
+				i.hide()
+
+func set_coin_queue(queue_lenght : int) -> void:
+	coin_queue = queue_lenght
 	coin_queue_id = (coin_queue_id + 1) % 3
-	coin_queue_left[coin_queue_id] = value
+	coin_queue_left[coin_queue_id] = queue_lenght
 	if coin_queue_id == coin_queue_last:
 		coin_queue_last = -1
 
@@ -212,8 +248,8 @@ func update_area() -> void:
 		var new_area = g.random(2)
 		while new_area == area:
 			new_area = g.random(2)
-		area = new_area
-		$MusicPlayer.stream = load("res://Sounds/Music/soundtrack" + str(area) + ".wav")
+		
+		set_area(new_area)
 		
 		t_area = T_area
 
@@ -260,7 +296,7 @@ func update_background_tree(delta) -> void:
 		i.position.y -= speed_tree * delta
 		if i.position.y <= -111:
 			i.position.y = branches[(branches.find(i) - 1 % 4)].position.y + (110 + g.random(100))
-			i.texture = g.choose(branch_types)
+			i.texture = g.choose(branch_types[area])
 
 func update_game_speed() -> void:
 	
