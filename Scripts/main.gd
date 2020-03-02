@@ -90,8 +90,6 @@ func end_game() -> void:
 
 func init() -> void:
 	
-	set_area(1)
-	
 	pivot_coin_position(true)
 	coins = 0
 	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
@@ -245,9 +243,9 @@ func update_area() -> void:
 	if t_area > 0:
 		t_area -= 1
 	else:
-		var new_area = g.random(2)
+		var new_area = g.random(1)
 		while new_area == area:
-			new_area = g.random(2)
+			new_area = g.random(1)
 		
 		set_area(new_area)
 		

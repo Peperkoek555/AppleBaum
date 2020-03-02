@@ -1,7 +1,7 @@
 extends Area2D
 
 var hspd : float = 0
-var sounds_acorn = [load("res://Sounds/acorn0.wav"),
+var sounds_acorn = [load("res://Sounds/acorn0galm.wav"),
 					load("res://Sounds/complete_queue0.wav")]
 var sounds_game = [load("res://Sounds/game_over.wav")]
 var target_x : float
