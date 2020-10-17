@@ -1,75 +1,84 @@
 extends Node2D
 
+var acorn_icon_frame : int = 0
+var acorn_rarity : Array # [silver, gold, diamond]
+var acorn_rarity_bit : bool = true # whether a diamond can spawn
+var acorn_rarity_thres : int
+var acorn_pitch : float = 1
+var acorn_queue_active : int # the current generating queue (id)
+var acorn_queue_combo : int # the current interacted queue (id)
+var acorn_queue_size = {} # the amount of acorns left in a given queue -> queue completion sound effect
+var acorn_xpos : int
+var acorns : int
 var area : int = 0 # 0 = forest; 1 = snow; 2 = jungle
 var branch_worm_type : int # -1 = none; 0 = idle; 1 = moving; 2 = ambush
-var can_add_coin : bool = true
-var coin_chance : Array 
-var coin_icon_frame : int = 0
-var coin_position : int
-var coin_rarity_bit : bool = true # whether a diamond can spawn
-var coin_pitch : float = 1
-var coin_queue : int = 0
-var coin_queue_id : int = -1
-var coin_queue_left = [0, 0, 0] # the amount of coins left in the queue -> queue completion sound effect
-var coin_queue_last : int # the last queue (id) eaten from
-var coin_thres : int = 20
-var coins : int
+var distance : float
 var game_over : bool = false
 var hazard_free : bool = true  # whether a new hazard can be spawn
 var hazard_type : int # 0 = falling apple; 1 = worm; 2 = ambush worm; 3 = giant work; 4 = area unique
 var hazard_weights : Array = [10, 10]
 	# [hazardApple, hazardWorm, hazardBigWorm, hazardSpecial] 
+var queue_next : bool = true
+var queue_next_i : int
 var room_height : int = 280
 var room_width : int = 160
-var score : float
 var speed_cloud : int
 var speed_tree : int
-var t_area : int
-var t_branch : int
-var t_coin : int
-var t_enemy : int
-var t_hazard : int
-var t_speed : int
-var t_warning : int
-const T_area : int = 2500
-const T_enemy : int = 100
+var t_acc : Object
+var t_area : Object
+var t_acorn : Object
+var t_hazard : Object
+var t_warning : Object
 
-onready var branch_types = [[load("res://Textures/Backgrounds/branch_0.png"),
-							 load("res://Textures/Backgrounds/branch_1.png")],
-							[load("res://Textures/Backgrounds/branch_winter_0.png"),
-							 load("res://Textures/Backgrounds/branch_winter_1.png")],
-							[load("res://Textures/Backgrounds/branch_0.png"),
-							 load("res://Textures/Backgrounds/branch_1.png")]]
+const ACORN = preload("res://Scenes/Acorn.tscn")
+const ACORN_SOUND_COLLECT = preload("res://Sounds/acorn0galm.wav")
+const ACORN_SOUND_DIAMOND = preload("res://Sounds/acorn_diamond0.wav")
+const ACORN_SOUND_GOTALL = preload("res://Sounds/complete_queue0.wav")
+const ACORN_TYPES = ["acorn_normal", "acorn_silver", "acorn_gold", "acorn_diamond"]
+const ACORN_VALUES = [1, 3, 10, 50]
+const TIMER = preload("res://Scripts/timer.gd")
+const BRANCH_TYPES = [[preload("res://Textures/Backgrounds/branch_0.png"),
+					   preload("res://Textures/Backgrounds/branch_1.png")],
+					  [preload("res://Textures/Backgrounds/branch_winter_0.png"),
+					   preload("res://Textures/Backgrounds/branch_winter_1.png")],
+					  [preload("res://Textures/Backgrounds/branch_0.png"),
+					   preload("res://Textures/Backgrounds/branch_1.png")]]
+
 onready var branches = [$Background/Branch, $Background/Branch2,
 						$Background/Branch3,$Background/Branch4]
 onready var clouds = [$Background/Clouds, $Background/Clouds2]
+onready var icon_acorn = $Overlay/IconAcorn
+onready var player = $SoundPlayer
 onready var tree = [$Background/Tree, $Background/Tree2, $Background/Tree3, $Background/Tree4]
 onready var treeback1 = [$Background/Back, $Background/Back4]
 onready var treeback2 = [$Background/Back2, $Background/Back5]
 onready var treeback3 = [$Background/Back3, $Background/Back6]
-onready var show_score = $GUI/ShowScore
-onready var show_coins = $GUI/ShowCoins
-onready var warning = $GUI/WarningSign
+onready var show_score = $Overlay/ShowScore
+onready var show_acorns = $Overlay/ShowAcorns
+onready var warning = $Overlay/WarningSign
 
 func _ready():
 	
+	t_warning = TIMER.new()
+	t_warning.init(1.5, 1, false, true)
 	g.load_settings()
-	init()
+	game_start()
 
 func _process(delta):
 	
 	check_keyboard()
 	
 	if !game_over:
-		spawn_entities()
-		update_game_speed()
+		update_acorns()
 	
+	update_acorns()
 	update_background(delta)
+	update_distance(delta)
 	update_music()
-	update_score(delta)
-	update_timers()
+	update_timers(delta)
 
 func check_keyboard() -> void:
+	
 	if Input.is_action_just_released("game_exit"):
 		get_tree().quit()
 	if Input.is_action_just_released("game_restart"):
@@ -81,29 +90,75 @@ func check_keyboard() -> void:
 	if Input.is_action_just_released("game_spd4"):
 		Engine.time_scale = 4
 
-func end_game() -> void:
+func collect_acorn(queue_id : int, type: int) -> void:
+	
+	acorn_queue_size[queue_id] -= 1
+	
+	if queue_id == acorn_queue_combo:
+		acorn_pitch += 1 / 12.0
+	else:
+		acorn_pitch = 1.0
+		acorn_queue_combo = queue_id
+	collect_acorn_sound(queue_id, type)
+	
+	acorns += ACORN_VALUES[type]
+	icon_acorn.animation = ACORN_TYPES[type]
+
+func collect_acorn_sound(queue_id : int, type: int):
+	
+	player.pitch_scale = 1
+	player.volume_db = 0
+	
+	if type < 3:
+		
+		if acorn_queue_size[queue_id] > 0:
+			player.stream = ACORN_SOUND_COLLECT
+			player.pitch_scale = acorn_pitch
+		else:
+			player.stream = ACORN_SOUND_GOTALL
+			player.pitch_scale = 1
+	else:
+		player.stream = ACORN_SOUND_DIAMOND
+		player.volume_db = 4
+	
+	player.play()
+
+func create_acorn_queue(queue_length : int) -> void:
+	
+	var acorn_queue_id = 0
+	while acorn_queue_id in acorn_queue_size:
+		acorn_queue_id += 1
+	acorn_queue_active = acorn_queue_id
+	queue_next_i = queue_length
+	acorn_queue_size[acorn_queue_id] = queue_length
+
+func game_end() -> void:
 	
 	$Restart.show()
-	if score > g.highscore: g.highscore = score
+	if distance > g.distance_best: g.distance_best = distance
 	g.save_settings()
 	game_over = true
 
-func init() -> void:
+func game_start() -> void:
 	
-	set_area(1)
-	
-	pivot_coin_position(true)
-	coins = 0
-	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
-	score = 0
+	pick_acorn_xpos(false)
+	acorns = 0
+	distance = 0
+	acorn_rarity = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
+	acorn_rarity_thres = 20
 	speed_cloud = 10
 	speed_tree = 125
-	t_area = T_area
-	t_coin = 100
-	t_enemy = T_enemy
+	t_acc = TIMER.new()
+	t_acc.init(1.2)
+	t_area = TIMER.new()
+	t_area.init(45)
+	t_acorn = TIMER.new()
+	t_acorn.init(2)
+	t_hazard = TIMER.new()
+	t_hazard.init(1, 1, false)
 	
 	for i in get_children():
-		if i.is_in_group("coin") || i.is_in_group("hazard"):
+		if i.is_in_group("acorn") || i.is_in_group("hazard"):
 			i.queue_free()
 	
 	for i in range(0, len(branches)):
@@ -112,34 +167,44 @@ func init() -> void:
 			branches[0].position.y = g.random(room_height)
 		else: branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
 		
-		branches[i].texture = g.choose(branch_types[area])
+		branches[i].texture = g.choose(BRANCH_TYPES[area])
 	
 	$Apple.show()
 	$Restart.hide()
 	
 	randomize()
 
-func pivot_coin_position(scramble : bool) -> void:
+func get_new_acorn() -> int:
 	
-	if scramble:
-		coin_position = 20 * g.random(7)
-	elif g.random(2) == 0:
-		coin_position += g.choose([-20, 20])
+	if distance >= 20:
+		if g.chance(acorn_rarity[0]):
+			return 1
+	if distance >= 40:
+		if g.chance(acorn_rarity[1]):
+			return 2
+	if distance >= 60:
+		if g.chance(acorn_rarity[2]) && acorn_rarity_bit == true:
+			acorn_rarity_bit = false
+			return 3
+	return 0
+
+func pick_acorn_xpos(relative : bool = true) -> void:
+	
+	if relative:
 		
-	if coin_position < 0:
-		coin_position = 0
-	if coin_position > room_width - 20:
-		coin_position = room_width - 20
+		if g.chance(3):
+			acorn_xpos = g.normal(acorn_xpos + g.choose([-20, 20]), \
+				0, room_width - 20)
+	else:
+		acorn_xpos = 20 * g.random(7)
 
 func restart_game() -> void:
-	
 	game_over = false
-	init()
+	game_start()
 
 func set_area(new_area : int) -> void:
 	
 	area = new_area
-	
 	$MusicPlayer.stream = load("res://Sounds/Music/soundtrack" + str(new_area) + ".wav")
 	
 	match area:
@@ -166,69 +231,21 @@ func set_area(new_area : int) -> void:
 			for i in treeback3:
 				i.hide()
 
-func set_coin_queue(queue_lenght : int) -> void:
-	coin_queue = queue_lenght
-	coin_queue_id = (coin_queue_id + 1) % 3
-	coin_queue_left[coin_queue_id] = queue_lenght
-	if coin_queue_id == coin_queue_last:
-		coin_queue_last = -1
-
 func show_warning(pos : Vector2) -> void:
 	
 	warning.show()
 	warning.position = pos
-	t_warning = 60
+	t_warning.reset()
 
-func spawn_entities() -> void:
+func spawn_hazard() -> void:
 	
-	spawn_coins()
-	spawn_hazards()
-	
-func spawn_coins() -> void:
-	
-	if coin_queue > 0:
-		
-		if can_add_coin:
-			
-			can_add_coin = false
-			coin_queue -= 1
-			pivot_coin_position(false)
-			
-			var new_coin = load("res://Scenes/Coin.tscn").instance()
-			new_coin.position = Vector2(coin_position, room_height + 6)
-			new_coin.queue_id = coin_queue_id
-			add_child(new_coin)
-		
-	else:
-		
-		if coin_queue <= 0 && t_coin > 0:
-			t_coin -= 1
-			
-		else: 
-			t_coin = 30 + g.random(30)
-			pivot_coin_position(true)
-			if g.random(1) == 0: set_coin_queue(4 + g.random(8))
+	match(g.choose_weighted(hazard_weights)):
+		0: spawn_hazard_apple()
+		1: spawn_hazard_worm(g.random(2))
 
-func spawn_hazards() -> void:
-	
-	if hazard_free:
-		
-		if t_hazard < 60:
-			t_hazard += 1
-		else:
-			t_hazard = 0
-			
-			match(g.choose_weighted(hazard_weights)):
-				
-				0: spawn_hazards_apple()
-				1: spawn_hazards_worm(g.random(2))
-			
-			hazard_free = false
-
-func spawn_hazards_apple() -> void:
+func spawn_hazard_apple() -> void:
 	
 	var xpos = g.random(4) * 32
-			
 	show_warning(Vector2(xpos + 16, 32))
 	
 	var new_hazard_apple = load("res://Scenes/HazardApple.tscn").instance()
@@ -236,28 +253,42 @@ func spawn_hazards_apple() -> void:
 	add_child(new_hazard_apple)
 
 # @param type: 0 = idle; 1 = moving; 2 = ambush
-func spawn_hazards_worm(type : int) -> void:
-	
+func spawn_hazard_worm(type : int) -> void:
 	branch_worm_type = type
+
+func update_acorns() -> void:
+	
+	if acorn_queue_active in acorn_queue_size:
+		
+		if queue_next_i > 0:
+			
+			if queue_next:
+				
+				queue_next = false
+				
+				queue_next_i -= 1
+				pick_acorn_xpos()
+				var new_acorn = ACORN.instance()
+				new_acorn.position = Vector2(acorn_xpos, room_height + 6)
+				new_acorn.queue_id = acorn_queue_active
+				add_child(new_acorn)
+			
+		else:
+			acorn_queue_active = -1
+			t_acorn.init(2 + g.random(4), 1, false)
 
 func update_area() -> void:
 	
-	if t_area > 0:
-		t_area -= 1
-	else:
-		var new_area = g.random(2)
-		while new_area == area:
-			new_area = g.random(2)
-		
-		set_area(new_area)
-		
-		t_area = T_area
+	var new_area = g.random(1)
+	while new_area == area:
+		new_area = g.random(1)
+	set_area(new_area)
 
 func update_background(delta) -> void:
 	
-	update_area()
+	#update_area()
 	update_background_tree(delta)
-			
+	
 	for i in clouds:
 		i.position.x += speed_cloud * delta
 		if i.position.x > room_width:
@@ -276,7 +307,7 @@ func update_background_tree(delta) -> void:
 		i.position.y -= speed_tree * delta
 		if i.position.y <= -room_height:
 			i.position.y += room_height * 2
-			
+	
 	# backtree movement
 	for i in treeback1:
 		i.position.y -= speed_tree * delta * (60.0 / 100)
@@ -296,47 +327,48 @@ func update_background_tree(delta) -> void:
 		i.position.y -= speed_tree * delta
 		if i.position.y <= -111:
 			i.position.y = branches[(branches.find(i) - 1 % 4)].position.y + (110 + g.random(100))
-			i.texture = g.choose(branch_types[area])
-
-func update_game_speed() -> void:
-	
-	if t_speed < 70:
-		t_speed += 1
-	else:
-		t_speed = 0
-		speed_tree += 1
+			i.texture = g.choose(BRANCH_TYPES[area])
 
 func update_music() -> void:
 	
 	if $MusicPlayer.playing == false:
 		$MusicPlayer.play()
 
-func update_score(delta) -> void:
+func update_distance(delta) -> void:
 	
-	score += speed_tree * delta * 0.003125
+	distance += speed_tree * delta * 0.003125
 	
-	show_score.text = str(stepify(score, 0.1))
-	show_coins.text = str(coins)
-	$GUI/ShowArea.text = "area 0" + str(area)
+	show_score.text = str(stepify(distance, 0.1))
+	show_acorns.text = str(acorns)
+	$Overlay/ShowArea.text = "area 0" + str(area)
 	
-	# update coin frequency
-	if score >= coin_thres:
-		for i in len(coin_chance):
-			if coin_chance[i] > 0 + int(i == 2):
-				coin_chance[i] -= 1
-		coin_thres += 20
+	# update acorn rarity
+	if distance >= acorn_rarity_thres:
+		for i in len(acorn_rarity):
+			if acorn_rarity[i] > 0 + int(i == 2):
+				acorn_rarity[i] -= 1
+		acorn_rarity_thres += 20
 		
-	if coin_icon_frame < 96:
-		coin_icon_frame += 1
+	if acorn_icon_frame < 96:
+		acorn_icon_frame += 1
 	else:
-		coin_icon_frame = 0
-	$GUI/CoinIcon.frame = floor(coin_icon_frame / 12.0)
+		acorn_icon_frame = 0
+	icon_acorn.frame = floor(acorn_icon_frame / 12.0)
 
-func update_timers() -> void:
+func update_timers(delta) -> void:
 	
-	if t_warning != -1:
-		if t_warning > 0:
-			t_warning -= 1
-		else:
-			t_warning = -1
+	if t_acorn.advance(delta):
+		pick_acorn_xpos(false)
+		create_acorn_queue(4 + g.random(8))
+	
+	if t_area.advance(delta):
+		update_area()
+	
+	if !game_over:
+		
+		if t_acc.advance(delta):
+			speed_tree += 1
+		if t_hazard.advance(delta):
+			spawn_hazard()
+		if t_warning.advance(delta):
 			warning.hide()

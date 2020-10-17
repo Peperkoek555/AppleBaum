@@ -1,15 +1,11 @@
 extends Area2D
 
 var hspd : float = 0
-var sounds_acorn = [load("res://Sounds/acorn0.wav"),
-					load("res://Sounds/complete_queue0.wav")]
-var sounds_game = [load("res://Sounds/game_over.wav")]
 var target_x : float
 const T_blink : int = 5
 var t_blink : int
 var t_blink_period : int
 
-onready var coinIcon = get_parent().get_node("GUI").get_node("CoinIcon")
 onready var main = get_parent()
 
 # Called when the node enters the scene tree for the first time.
@@ -35,8 +31,8 @@ func blink() -> void:
 		t_blink_period -= 1
 		
 		if t_blink_period == 0:
-			$Blinking.frame = abs($AnimatedSprite.frame - 1)
-			$AnimatedSprite.hide()
+			$Blinking.frame = abs($Idle.frame - 1)
+			$Idle.hide()
 			$Blinking.show()
 		
 	else:
@@ -46,14 +42,29 @@ func blink() -> void:
 		else:
 			t_blink = T_blink
 			t_blink_period = 90 + g.random(45)
-			$AnimatedSprite.frame = abs($Blinking.frame - 1)
+			$Idle.frame = abs($Blinking.frame - 1)
 			$Blinking.hide()
-			$AnimatedSprite.show()
+			$Idle.show()
+
+func collide(area):
+	
+	if !main.game_over:
+		
+		if area.is_in_group("acorns"):
+			if !area.is_eaten:
+				main.collect_acorn(area.queue_id, area.type)
+				area.is_eaten = true
+				
+		elif area.is_in_group("enemy"):
+			
+			$Player.play()
+			main.game_end()
+			hide()
 
 func move_acc() -> void:
 	
 	hspd = abs(target_x - position.x) / 10.0
-	$AnimatedSprite.rotation_degrees = - sign(target_x - position.x) * abs(target_x - position.x) / 80 * 30
+	$Idle.rotation_degrees = - sign(target_x - position.x) * abs(target_x - position.x) / 80 * 30
 
 func normal(x : float) -> float:
 	
@@ -65,47 +76,3 @@ func normal(x : float) -> float:
 		x_new = 147
 		
 	return x_new
-
-func collide(area):
-	
-	if !main.game_over:
-		
-		if area.is_in_group("coin"):
-			
-			if !area.eaten:
-					
-				if area.queue_id == main.coin_queue_last:
-					main.coin_pitch += 1 / 12.0
-				else:
-					main.coin_pitch = 1.0
-					main.coin_queue_last = area.queue_id
-				
-				play_sound_for_acorn(area)
-				
-				main.coins += g.coin_values[area.type]
-				coinIcon.animation = g.coin_types[area.type]
-				
-				area.eaten = true
-				
-		elif area.is_in_group("enemy"):
-			
-			$PlayerGeneral.stream = sounds_game[0]
-			$PlayerGeneral.play()
-			main.end_game()
-			hide()
-
-func play_sound_for_acorn(area):
-	
-	if area.type == 3:
-		$PlayerAcornDiamond.play()
-	else:
-		$PlayerAcorn.stream = sounds_acorn[0]
-		$PlayerAcorn.pitch_scale = main.coin_pitch
-		$PlayerAcorn.play()
-		
-	if main.coin_queue_left[area.queue_id] > 1:
-		main.coin_queue_left[area.queue_id] -= 1
-	else:
-		$PlayerAcorn.stream = sounds_acorn[1]
-		$PlayerAcorn.pitch_scale = 1
-		$PlayerAcorn.play()

@@ -3,9 +3,7 @@ extends Node
 const SAVE_PATH = "res://config.cfg"
 var _config_file = ConfigFile.new()
 
-var highscore : int = 0
-var coin_types = ["acorn_normal", "acorn_silver", "acorn_gold", "acorn_diamond"]
-var coin_values = [1, 3, 10, 50]
+var distance_best : int = 0
 
 func load_settings() -> void:
 	
@@ -13,44 +11,40 @@ func load_settings() -> void:
 	if error != OK:
 		print("Failed loading settings file. Error code %s"% error)
 	
-	highscore = _config_file.get_value("highscore", "highscore",  highscore)
+	distance_best = _config_file.get_value("distance_best", "distance_best",  distance_best)
 
 func save_settings() -> void:
 	
-	_config_file.set_value("highscore", "highscore", highscore)
+	_config_file.set_value("distance_best", "distance_best", distance_best)
 	_config_file.save(SAVE_PATH)
 
 #---------------------------GENERAL-FUNCTION-LIBRARY-------------------------------#
 
 # returns -1 for false; 1 for true
 func bool2sign(b : bool) -> int:
+	
 	if b: return 1
 	else: return -1
 
-# flip image vertically if upside down
-# @return whether to flip image
-func check_flip(angle : float) -> bool: 
-	var check_angle =  normal(angle)
-	
-	if check_angle >= (PI/2) and check_angle < (PI*3/2):
-		return true
-	else:
-		return false
+# returns true with a chance of 1 / n
+func chance(n : int) -> bool:
+	return random(n - 1) == 0
 
 # returns random value from given list
 # @pre 'list' is NOT empty
 func choose(list : Array): 
-	return list[random(len(list) - 1)]
+	return list[random(len(list)) - 1]
 
-# returns an index number from [0, len(weights)[, with respect to the given chance weights 
-# 	(higher weight = higher chance to be picked)
+# returns a random index number from 'weights', where
+# 	| higher weight -> higher chance to be picked
 # @pre 'weights' is NOT empty
 func choose_weighted(weights : Array) -> int:
-	var chancevar = random(sum(weights) - 1)
+	
+	var x = random(sum(weights) - 1)
 	var cumsum = 0
 	for i in weights:
 		cumsum += i
-		if chancevar < i:
+		if x < i:
 			return weights.find(i)
 	return -1
 
@@ -58,34 +52,36 @@ func choose_weighted(weights : Array) -> int:
 func db(percentage : float) -> float: 
 	return 20 * (log(percentage) / log(10))
 
-func get_position_centered(position : Vector2, size : Vector2) -> Vector2: # calculates the position as centered around a given point
-	return position - size / 2
-
 # returns the maximum value from a given list
 # NOTE: only positive numbers will be considered
 func max_list(list):
+	
 	var max_value = 0
 	for i in list:
 		if i > max_value: max_value = i
 	return max_value
 
-func normal(angle : float) -> float:
-	var check_angle = angle
-	while (check_angle > (2*PI)): check_angle -= (2*PI)
-	while (check_angle < 0): check_angle += (2*PI)
-	return check_angle
+# returns 'value' if value is between [low, high]
+# returns 'low' if value < low
+# returns 'high' if value > high
+func normal(value : float, low : float, high : float) -> float:
+	
+	if value < low: return low
+	if value > high: return high
+	return value
 
-# returns an integer between 0 and n, inclusive
+# returns an integer between [0, n]
 func random(n : int) -> int:
 	return randi() % (n + 1)
 
-# returns a float between 0 and n, inclusive
+# returns a float between [0, n]
 func randomf(n : float) -> float: 
 	return randf() * n
 
 # returns the sum of all elements from the given list
 # @pre 'list' only contains integer values
 func sum(list : Array) -> int:
+	
 	var sum = 0
 	for i in list:
 		sum += i
