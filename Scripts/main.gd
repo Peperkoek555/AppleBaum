@@ -146,13 +146,6 @@ func game_start() -> void:
 	distance = 0
 	acorn_rarity = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
 	acorn_rarity_thres = 20
-	
-func init() -> void:
-	
-	pivot_coin_position(true)
-	coins = 0
-	coin_chance = [3, 8, 34] # 7+1; 31+3 accounted for non-appearing waves
-	score = 0
 	speed_cloud = 10
 	speed_tree = 125
 	t_acc = TIMER.new()
