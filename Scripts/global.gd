@@ -44,13 +44,13 @@ func choose_weighted(weights : Array) -> int:
 	var cumsum = 0
 	for i in weights:
 		cumsum += i
-		if x < i:
+		if x < cumsum:
 			return weights.find(i)
 	return -1
 
-# returns decibel value of given percentage
-func db(percentage : float) -> float: 
-	return 20 * (log(percentage) / log(10))
+# returns decibel value of given percentage, relative to a given 'full' (db)
+func db(percentage : float, full_volume : float) -> float: 
+	return -20 + (full_volume + 20) * percentage
 
 # returns the maximum value from a given list
 # NOTE: only positive numbers will be considered

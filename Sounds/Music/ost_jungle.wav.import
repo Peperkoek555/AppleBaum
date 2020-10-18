@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/ost_jungle.wav-431dd1476bd58ea9ebbfd9f7f7d7a20d.sample"
+
+[deps]
+
+source_file="res://Sounds/Music/ost_jungle.wav"
+dest_files=[ "res://.import/ost_jungle.wav-431dd1476bd58ea9ebbfd9f7f7d7a20d.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

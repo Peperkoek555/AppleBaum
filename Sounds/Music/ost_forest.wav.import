@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/ost_forest.wav-45334f119612d3328615a4f59cbe396c.sample"
+
+[deps]
+
+source_file="res://Sounds/Music/ost_forest.wav"
+dest_files=[ "res://.import/ost_forest.wav-45334f119612d3328615a4f59cbe396c.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

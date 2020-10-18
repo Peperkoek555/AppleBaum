@@ -9,7 +9,7 @@ var t_death : float = 10
 
 func _ready():
 	
-	type = main.get_new_acorn()
+	type = g.choose_weighted(main.acorn_rarity)
 	match type:
 		1:
 			$AnimatedSprite.animation = "acorn_silver"
