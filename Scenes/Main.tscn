@@ -1,8 +1,7 @@
-[gd_scene load_steps=57 format=2]
+[gd_scene load_steps=51 format=2]
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Apple.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Textures/particle_leaves_0.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/MenuButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=5]
 [ext_resource path="res://Textures/Backgrounds/cloud0.png" type="Texture" id=6]
@@ -20,7 +19,6 @@
 [ext_resource path="res://Textures/acorn_silver_5.png" type="Texture" id=18]
 [ext_resource path="res://Textures/acorn_silver_7.png" type="Texture" id=19]
 [ext_resource path="res://Textures/acorn_silver_4.png" type="Texture" id=20]
-[ext_resource path="res://Textures/particle_leaves_1.png" type="Texture" id=21]
 [ext_resource path="res://Textures/acorn_diamond_0.png" type="Texture" id=22]
 [ext_resource path="res://Textures/acorn_diamond_1.png" type="Texture" id=23]
 [ext_resource path="res://Textures/acorn_diamond_2.png" type="Texture" id=24]
@@ -48,21 +46,19 @@
 [ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=46]
 [ext_resource path="res://Textures/s_warning_0.png" type="Texture" id=47]
 [ext_resource path="res://Textures/s_warning_1.png" type="Texture" id=48]
-[ext_resource path="res://Textures/particle_leaves_2.png" type="Texture" id=49]
-[ext_resource path="res://Textures/particle_leaves_4.png" type="Texture" id=50]
-[ext_resource path="res://Textures/particle_leaves_3.png" type="Texture" id=51]
-[ext_resource path="res://Textures/particle_leaves_5.png" type="Texture" id=52]
+[ext_resource path="res://Textures/particles_forest.png" type="Texture" id=49]
 
-[sub_resource type="SpriteFrames" id=1]
+[sub_resource type="CanvasItemMaterial" id=1]
+particles_animation = true
+particles_anim_h_frames = 6
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="SpriteFrames" id=2]
 animations = [ {
 "frames": [ ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ) ],
 "loop": true,
 "name": "acorn_normal",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
-"loop": true,
-"name": "acorn_silver",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
@@ -74,36 +70,20 @@ animations = [ {
 "loop": true,
 "name": "acorn_gold",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
+"loop": true,
+"name": "acorn_silver",
+"speed": 5.0
 } ]
 
-[sub_resource type="SpriteFrames" id=2]
+[sub_resource type="SpriteFrames" id=3]
 animations = [ {
 "frames": [ ExtResource( 47 ), ExtResource( 48 ) ],
 "loop": true,
 "name": "default",
 "speed": 5.0
 } ]
-
-[sub_resource type="CanvasItemMaterial" id=3]
-particles_animation = true
-particles_anim_h_frames = 6
-particles_anim_v_frames = 1
-particles_anim_loop = false
-
-[sub_resource type="AnimatedTexture" id=4]
-frames = 6
-fps = 0.0
-frame_0/texture = ExtResource( 3 )
-frame_1/texture = ExtResource( 21 )
-frame_1/delay_sec = 0.0
-frame_2/texture = ExtResource( 49 )
-frame_2/delay_sec = 0.0
-frame_3/texture = ExtResource( 51 )
-frame_3/delay_sec = 0.0
-frame_4/texture = ExtResource( 50 )
-frame_4/delay_sec = 0.0
-frame_5/texture = ExtResource( 52 )
-frame_5/delay_sec = 0.0
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -273,16 +253,38 @@ z_index = -3
 texture = ExtResource( 13 )
 centered = false
 
+[node name="ParticlesBack" type="CPUParticles2D" parent="Background"]
+material = SubResource( 1 )
+position = Vector2( 190, -30 )
+z_index = -1
+amount = 13
+lifetime = 5.5
+texture = ExtResource( 49 )
+emission_shape = 2
+emission_rect_extents = Vector2( 140, 1 )
+direction = Vector2( -1, 1.75 )
+spread = 10.0
+gravity = Vector2( -5, 8.75 )
+initial_velocity = 50.0
+angular_velocity = 160.0
+angular_velocity_random = 1.0
+angle = 45.0
+angle_random = 1.0
+scale_amount = 2.0
+anim_offset = 1.0
+anim_offset_random = 1.0
+
 [node name="Overlay" type="Node2D" parent="."]
 z_index = 5
 z_as_relative = false
 
 [node name="IconAcorn" type="AnimatedSprite" parent="Overlay"]
 position = Vector2( 152.632, 25.0321 )
-frames = SubResource( 1 )
+frames = SubResource( 2 )
 animation = "acorn_normal"
 
 [node name="ShowArea" type="Label" parent="Overlay"]
+visible = false
 margin_left = 2.0
 margin_top = 2.0
 margin_right = 90.0
@@ -314,6 +316,9 @@ custom_fonts/font = ExtResource( 46 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "M"
 align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ShowScore" type="Label" parent="Overlay"]
 margin_left = 57.0
@@ -332,26 +337,26 @@ __meta__ = {
 [node name="WarningSign" type="AnimatedSprite" parent="Overlay"]
 visible = false
 position = Vector2( 34.794, 11.7486 )
-frames = SubResource( 2 )
-frame = 1
+frames = SubResource( 3 )
 playing = true
 
-[node name="CPUParticles2D" type="CPUParticles2D" parent="Overlay"]
-material = SubResource( 3 )
-position = Vector2( 244.569, -98.9714 )
-amount = 30
-lifetime = 4.0
-randomness = 0.44
-texture = SubResource( 4 )
-emission_shape = 1
-emission_sphere_radius = 100.0
-gravity = Vector2( -35, 50 )
-initial_velocity = 20.0
-initial_velocity_random = 1.0
-angular_velocity = 10.0
+[node name="ParticlesFront" type="CPUParticles2D" parent="Overlay"]
+material = SubResource( 1 )
+position = Vector2( 190, -30 )
+amount = 13
+lifetime = 5.5
+texture = ExtResource( 49 )
+emission_shape = 2
+emission_rect_extents = Vector2( 140, 1 )
+direction = Vector2( -1, 1.75 )
+spread = 10.0
+gravity = Vector2( -5, 8.75 )
+initial_velocity = 50.0
+angular_velocity = 160.0
+angular_velocity_random = 1.0
 angle = 45.0
 angle_random = 1.0
-scale_amount = 3.0
+scale_amount = 2.0
 anim_offset = 1.0
 anim_offset_random = 1.0
 [connection signal="finished" from="MusicPlayer0" to="." method="_player_ended" binds= [ 0 ]]

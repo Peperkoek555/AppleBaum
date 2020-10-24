@@ -1,50 +1,32 @@
 extends Area2D
 
 var hspd : float = 0
+var t_blink : Object
 var target_x : float
-const T_blink : int = 5
-var t_blink : int
-var t_blink_period : int
 
+const TIMER = preload("res://Scripts/timer.gd")
+
+onready var image = $AnimatedSprite
 onready var main = get_parent()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
-	t_blink = T_blink
+	t_blink = TIMER.new()
+	t_blink.init(3, 1)
 
 func _process(delta):
 	
-	#target_x = int(normal(get_global_mouse_position().x) / (main.room_width / 4.0)) * (main.room_width / 4.0) + main.room_width / 8.0
-	target_x = normal(get_global_mouse_position().x)
-	if position.x < target_x - 1 || position.x > target_x + 1:
-		position.x += hspd * sign(target_x - position.x)
-	else:
-		hspd = 0
+	follow_mouse()
+	match t_blink.advance_perc(delta, [0.97, 1.0]):
 		
-	move_acc()
-	blink()
-
-func blink() -> void:
-
-	if t_blink_period > 0:
-		t_blink_period -= 1
-		
-		if t_blink_period == 0:
-			$Blinking.frame = abs($Idle.frame - 1)
-			$Idle.hide()
-			$Blinking.show()
-		
-	else:
-		
-		if t_blink > 0:
-			t_blink -= 1
-		else:
-			t_blink = T_blink
-			t_blink_period = 90 + g.random(45)
-			$Idle.frame = abs($Blinking.frame - 1)
-			$Blinking.hide()
-			$Idle.show()
+		0:
+			var frame = image.frame
+			image.play("blinking")
+			image.frame = frame
+		1:
+			var frame = image.frame
+			image.play("idle")
+			image.frame = frame
 
 func collide(area):
 	
@@ -61,10 +43,17 @@ func collide(area):
 			main.game_end()
 			hide()
 
-func move_acc() -> void:
+func follow_mouse() -> void:
+	
+	target_x = normal(get_global_mouse_position().x)
+	if position.x < target_x - 1 || position.x > target_x + 1:
+		position.x += hspd * sign(target_x - position.x)
+	else:
+		hspd = 0
 	
 	hspd = abs(target_x - position.x) / 10.0
-	$Idle.rotation_degrees = - sign(target_x - position.x) * abs(target_x - position.x) / 80 * 30
+	image.rotation_degrees = -sign(target_x - position.x) * \
+		abs(target_x - position.x) / 80 * 30
 
 func normal(x : float) -> float:
 	

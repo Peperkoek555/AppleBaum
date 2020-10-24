@@ -4,7 +4,7 @@ extends "res://Scripts/entity.gd"
 func move(delta) -> void:
 	
 	if position.y - size.y / 2 < main.ROOM_H:
-		position.y += main.speed_tree * delta
+		position.y += main.fall_speed * delta
 	else:
 		destroy()
 

@@ -14,6 +14,7 @@ var area : String
 var branch_worm_type : int # -1 = none; 0 = idle; 1 = moving; 2 = ambush
 var current_player : int = 0 # current music player
 var distance : float
+var fall_speed : int
 var game_over : bool = false
 var hazard_free : bool = true  # whether a new hazard can be spawn
 var hazard_type : int # 0 = falling apple; 1 = worm; 2 = ambush worm; 3 = giant work; 4 = area unique
@@ -22,7 +23,6 @@ var hazard_weights : Array = [10, 10]
 var queue_next : bool = true
 var queue_next_i : int
 var speed_cloud : int
-var speed_tree : int
 var t_acc : Object
 var t_area : Object
 var t_acorn : Object
@@ -62,6 +62,7 @@ onready var canv_trees1 = [$Background/Back01, $Background/Back11]
 onready var canv_trees2 = [$Background/Back02, $Background/Back12]
 onready var clouds = [$Background/Clouds, $Background/Clouds2]
 onready var icon_acorn = $Overlay/IconAcorn
+onready var particles = [$Background/ParticlesBack, $Overlay/ParticlesFront]
 onready var player = $SoundPlayer
 onready var player_long = $SoundPlayerLong
 onready var show_score = $Overlay/ShowScore
@@ -71,9 +72,9 @@ onready var warning = $Overlay/WarningSign
 func _ready():
 	
 	t_music_trans = TIMER.new()
-	t_music_trans.init(3, 1, false, true)
+	t_music_trans.init(3, 0, false, true)
 	t_warning = TIMER.new()
-	t_warning.init(1.5, 1, false, true)
+	t_warning.init(1.5, 0, false, true)
 	g.load_settings()
 	game_start()
 
@@ -84,11 +85,9 @@ func _process(delta):
 	if !game_over:
 		update_acorns()
 	
-	update_acorns()
 	update_background(delta)
 	update_distance(delta)
 	update_timers(delta)
-	$Overlay/ShowArea.text = str(acorn_rarity)
 
 func _player_ended(index : int) -> void:
 	if index == current_player:
@@ -154,22 +153,22 @@ func game_end() -> void:
 
 func game_start() -> void:
 	
-	set_area("forest")
+	set_area(g.choose(["forest", "winter"]))
 	pick_acorn_xpos(false)
 	acorns = 0
 	distance = 0
 	acorn_rarity = [30, 0, 0, 0]
 	acorn_rarity_thres = 5
+	fall_speed = 125
 	speed_cloud = 10
-	speed_tree = 125
 	t_acc = TIMER.new()
 	t_acc.init(1.2)
 	t_area = TIMER.new()
 	t_area.init(45)
 	t_acorn = TIMER.new()
-	t_acorn.init(2)
+	t_acorn.init(2, 2, false)
 	t_hazard = TIMER.new()
-	t_hazard.init(1, 1, false)
+	t_hazard.init(1, 0, false)
 	
 	for i in get_children():
 		if i.is_in_group("acorn") || i.is_in_group("hazard"):
@@ -197,7 +196,7 @@ func restart_game() -> void:
 func set_area(area : String) -> void:
 	
 	self.area = area
-	$Overlay/ShowArea.text = area
+	#$Overlay/ShowArea.text = area
 	
 	# background
 	$Background/Canvas/Canvas.color = CANVAS_COLORS[area]
@@ -221,6 +220,13 @@ func set_area(area : String) -> void:
 		else: branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
 		
 		branches[i].texture = g.choose(BRANCH_TYPES[area])
+	
+	# particles
+	for i in particles:
+		i.texture = load("res://Textures/particles_" + area + ".png")
+		i.material.particles_anim_h_frames = \
+			6 + int(area == "winter")
+		i.amount = 16
 	
 	update_music(false, get_node("MusicPlayer" + str(current_player)).get_playback_position())
 
@@ -268,7 +274,7 @@ func update_acorns() -> void:
 			
 		else:
 			acorn_queue_active = -1
-			t_acorn.init(2 + g.random(2), 1, false)
+			t_acorn.reset()
 
 func update_area() -> void:
 	
@@ -281,42 +287,42 @@ func update_background(delta) -> void:
 	
 	update_background_tree(delta)
 	
-	for i in clouds:
-		i.position.x += speed_cloud * delta
-		if i.position.x > ROOM_W:
-			i.position.x -= ROOM_W * 2
+#	for i in clouds:
+#		i.position.x += speed_cloud * delta
+#		if i.position.x > ROOM_W:
+#			i.position.x -= ROOM_W * 2
 	
 	if game_over:
-		if speed_tree > 0:
-			speed_tree -= 2
+		if fall_speed > 0:
+			fall_speed -= 2
 		else:
-			speed_tree = 0
+			fall_speed = 0
 
 func update_background_tree(delta) -> void:
 	
 	# bark movement
 	for i in bark:
-		i.position.y -= speed_tree * delta
+		i.position.y -= fall_speed * delta
 		if i.position.y <= -ROOM_H:
 			i.position.y += ROOM_H * 2
 	
-	# backtree movement
+	# background tree movement
 	for i in canv_trees0:
-		i.position.y -= speed_tree * delta * (60.0 / 100)
+		i.position.y -= fall_speed * delta * (60.0 / 100)
 		if i.position.y <= -ROOM_H:
 			i.position.y += ROOM_H * 2
 	for i in canv_trees1:
-		i.position.y -= speed_tree * delta * (50.0 / 100)
+		i.position.y -= fall_speed * delta * (50.0 / 100)
 		if i.position.y <= -ROOM_H:
 			i.position.y += ROOM_H * 2
 	for i in canv_trees2:
-		i.position.y -= speed_tree * delta * (40.0 / 100)
+		i.position.y -= fall_speed * delta * (40.0 / 100)
 		if i.position.y <= -ROOM_H:
 			i.position.y += ROOM_H * 2
 	
 	# branch movement
 	for i in branches:
-		i.position.y -= speed_tree * delta
+		i.position.y -= fall_speed * delta
 		if i.position.y <= -111:
 			i.position.y = branches[(branches.find(i) - 1 % 4)].position.y + (110 + g.random(100))
 			i.texture = g.choose(BRANCH_TYPES[area])
@@ -333,7 +339,7 @@ func update_music(is_loop : bool = true, start : float = 0.0) -> void:
 
 func update_distance(delta) -> void:
 	
-	distance += speed_tree * delta * 0.003125
+	distance += fall_speed * delta * 0.003125
 	
 	show_score.text = str(stepify(distance, 0.1))
 	show_acorns.text = str(acorns)
@@ -341,11 +347,11 @@ func update_distance(delta) -> void:
 	# update acorn rarity
 	if distance >= acorn_rarity_thres:
 		for i in range(1, len(acorn_rarity)):
-			if distance >= 5 * i:
+			if distance >= 20 * i:
 				acorn_rarity[i] += 10
 				# diamond
 				if i == 3: acorn_rarity[i] = floor(acorn_rarity[1] / 30)
-		acorn_rarity_thres += 5
+		acorn_rarity_thres += 20
 		
 	if acorn_icon_frame < 96:
 		acorn_icon_frame += 1
@@ -362,20 +368,20 @@ func update_timers(delta) -> void:
 	if t_area.advance(delta):
 		update_area()
 	
-	if t_music_trans.advanceActive(delta):
+	if t_music_trans.advance_active(delta):
 		
 		get_node("MusicPlayer" + str(current_player)).volume_db = \
 			g.db(t_music_trans.get_progress(), -3)
 		get_node("MusicPlayer" + str((current_player + 1) % 2)).volume_db = \
 			g.db(1 - t_music_trans.get_progress(), -3)
-		if t_music_trans.has_passed(): 
+		if t_music_trans.is_full(): 
 			get_node("MusicPlayer" + str((current_player + 1) % 2)).stop()
 	
 	if !game_over:
 		
 		if t_acc.advance(delta):
-			speed_tree += 1
-		if t_hazard.advance(delta):
-			spawn_hazard()
+			fall_speed += 1
+#		if t_hazard.advance(delta):
+#			spawn_hazard()
 		if t_warning.advance(delta):
 			warning.hide()
