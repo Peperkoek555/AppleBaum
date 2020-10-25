@@ -338,6 +338,7 @@ __meta__ = {
 visible = false
 position = Vector2( 34.794, 11.7486 )
 frames = SubResource( 3 )
+frame = 1
 playing = true
 
 [node name="ParticlesFront" type="CPUParticles2D" parent="Overlay"]
