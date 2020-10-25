@@ -5,7 +5,7 @@ var t_blink : Object
 var target_x : float
 
 const TIMER = preload("res://Scripts/timer.gd")
-
+# LOOL
 onready var image = $AnimatedSprite
 onready var main = get_parent()
 
