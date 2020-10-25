@@ -226,7 +226,7 @@ func set_area(area : String) -> void:
 		i.texture = load("res://Textures/particles_" + area + ".png")
 		i.material.particles_anim_h_frames = \
 			6 + int(area == "winter")
-		i.amount = 16
+		i.amount = 3 + int(area == "winter")*13
 	
 	update_music(false, get_node("MusicPlayer" + str(current_player)).get_playback_position())
 
