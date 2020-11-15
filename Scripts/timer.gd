@@ -1,7 +1,6 @@
 extends Node
 
 var increment : float
-var is_forced : bool
 var is_periodic : bool
 var limit : float
 var limit_base : float
@@ -17,6 +16,7 @@ func advance(delta : float) -> bool:
 func advance_active(delta : float) -> bool:
 	
 	if !is_full():
+		# warning-ignore:return_value_discarded
 		inc_time(delta)
 		return true
 	return false
@@ -29,7 +29,6 @@ func advance_perc(delta : float, percentiles : Array) -> int:
 	var thresholds = []
 	for i in range(len(percentiles)):
 		thresholds.append(percentiles[i] * limit)
-	print(thresholds)
 	return advance_thres(delta, thresholds)
 
 # @return
@@ -55,12 +54,10 @@ func alt_limit(relative_limit : float) -> void:
 func complete() -> void:
 	time = limit
 
-func force() -> void:
-	is_forced = true
-
 func get_progress(get_inverted : bool = false) -> float:
 	return abs(int(get_inverted) - float(time) / limit)
 
+# PRIVATE
 # @return the new time (or limit if timer timed out)
 func inc_time(delta : float) -> float:
 	
@@ -73,6 +70,10 @@ func inc_time(delta : float) -> float:
 		return limit_old
 	return time
 
+# warning-ignore:shadowed_variable
+# warning-ignore:shadowed_variable
+# warning-ignore:shadowed_variable
+# warning-ignore:shadowed_variable
 func init(limit : float, limit_random : float = 0.0, is_periodic : bool = true, \
 	starts_full : bool = false, increment : float = 1.0) -> void:
 	
@@ -82,7 +83,6 @@ func init(limit : float, limit_random : float = 0.0, is_periodic : bool = true, 
 	self.is_periodic = is_periodic
 	self.increment = increment
 	self.time = 0 + int(starts_full) * limit
-	self.is_forced = false
 
 func is_full() -> bool:
 	return time >= limit
@@ -91,4 +91,5 @@ func reset() -> void:
 	time = 0
 
 func update_limit() -> void:
+	# warning-ignore:narrowing_conversion
 	limit = limit_base + g.random(limit_random)

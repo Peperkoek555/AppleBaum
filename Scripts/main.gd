@@ -1,6 +1,6 @@
 extends Node2D
 
-var acorn_icon_frame : int = 0
+var acorn_icon_type : int = 0
 var acorn_rarity : Array # [normal, silver, gold, diamond]
 var acorn_rarity_bit : bool = true # whether a diamond can spawn
 var acorn_rarity_thres : int
@@ -14,19 +14,17 @@ var area : String
 var branch_worm_type : int # -1 = none; 0 = idle; 1 = moving; 2 = ambush
 var current_player : int = 0 # current music player
 var distance : float
+var enemy_type : int
+var enemy_weights : Array = [10]
 var fall_speed : int
 var game_over : bool = false
-var hazard_free : bool = true  # whether a new hazard can be spawn
-var hazard_type : int # 0 = falling apple; 1 = worm; 2 = ambush worm; 3 = giant work; 4 = area unique
-var hazard_weights : Array = [10, 10]
-	# [hazardApple, hazardWorm, hazardBigWorm, hazardSpecial] 
 var queue_next : bool = true
 var queue_next_i : int
 var speed_cloud : int
 var t_acc : Object
 var t_area : Object
 var t_acorn : Object
-var t_hazard : Object
+var t_enemy : Object
 var t_music_trans : Object
 var t_warning : Object
 
@@ -48,6 +46,9 @@ const BRANCH_TYPES = {
 const CANVAS_COLORS = {
 	"forest": Color8(45, 66, 56),
 	"winter": Color8(181, 200, 213)
+}
+enum ENEMY_TYPES {
+	DEFAULT
 }
 const ROOM_H = 280
 const ROOM_W = 160
@@ -93,6 +94,9 @@ func _player_ended(index : int) -> void:
 	if index == current_player:
 		update_music(true)
 
+func _enemy_destroyed() -> void:
+	t_enemy.reset()
+
 func check_keyboard() -> void:
 	
 	if Input.is_action_just_released("game_exit"):
@@ -118,7 +122,12 @@ func collect_acorn(queue_id : int, type: int) -> void:
 	collect_acorn_sound(queue_id, type)
 	
 	acorns += ACORN_VALUES[type]
-	icon_acorn.animation = ACORN_TYPES[type]
+	if type != acorn_icon_type:
+		
+		var oldframe = icon_acorn.frame
+		icon_acorn.animation = ACORN_TYPES[type]
+		icon_acorn.frame = oldframe
+		acorn_icon_type = type
 
 func collect_acorn_sound(queue_id : int, type: int):
 	
@@ -146,52 +155,43 @@ func create_acorn_queue(queue_length : int) -> void:
 
 func game_end() -> void:
 	
-	$Restart.show()
+	$Overlay/Restart.show()
 	if distance > g.distance_best: g.distance_best = distance
 	g.save_settings()
 	game_over = true
 
 func game_start() -> void:
 	
-	set_area(g.choose(["forest", "winter"]))
-	pick_acorn_xpos(false)
+	game_over = false
+	randomize()
+	
+	set_area(g.choose(["forest", "winter"])) # delete later
+	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0
 	acorn_rarity = [30, 0, 0, 0]
 	acorn_rarity_thres = 5
 	fall_speed = 125
 	speed_cloud = 10
+	init_timers()
+	
+	for i in get_children():
+		if i.is_in_group("acorns") || i.is_in_group("enemies"):
+			i.queue_free()
+	
+	$Apple.show()
+	$Overlay/Restart.hide()
+
+func init_timers() -> void:
+	
 	t_acc = TIMER.new()
 	t_acc.init(1.2)
 	t_area = TIMER.new()
 	t_area.init(45)
 	t_acorn = TIMER.new()
 	t_acorn.init(2, 2, false)
-	t_hazard = TIMER.new()
-	t_hazard.init(1, 0, false)
-	
-	for i in get_children():
-		if i.is_in_group("acorn") || i.is_in_group("hazard"):
-			i.queue_free()
-	
-	$Apple.show()
-	$Restart.hide()
-	
-	randomize()
-
-func pick_acorn_xpos(relative : bool = true) -> void:
-	
-	if relative:
-		
-		if g.chance(3):
-			acorn_xpos = g.normal(acorn_xpos + g.choose([-20, 20]), \
-				0, ROOM_W - 20)
-	else:
-		acorn_xpos = 20 * g.random(7)
-
-func restart_game() -> void:
-	game_over = false
-	game_start()
+	t_enemy = TIMER.new()
+	t_enemy.init(1, 0, false)
 
 func set_area(area : String) -> void:
 	
@@ -232,28 +232,22 @@ func set_area(area : String) -> void:
 
 func show_warning(pos : Vector2) -> void:
 	
-	warning.show()
 	warning.position = pos
+	warning.show()
 	t_warning.reset()
 
-func spawn_hazard() -> void:
+func spawn_enemy() -> void:
 	
-	match(g.choose_weighted(hazard_weights)):
-		0: spawn_hazard_apple()
-		1: spawn_hazard_worm(g.random(2))
-
-func spawn_hazard_apple() -> void:
+	var new_enemy_type : int = g.choose_weighted(enemy_weights)
+	match(new_enemy_type):
+		
+		0:
+			var enemy_default = load("res://Scenes/EnemyDefault.tscn").instance()
+			enemy_default.position = \
+				Vector2(g.random(4) * (ROOM_W / 5), ROOM_H + 32)
+			add_child(enemy_default)
 	
-	var xpos = g.random(4) * 32
-	show_warning(Vector2(xpos + 16, 32))
-	
-	var new_hazard_apple = load("res://Scenes/HazardApple.tscn").instance()
-	new_hazard_apple.position = Vector2(xpos, -180)
-	add_child(new_hazard_apple)
-
-# @param type: 0 = idle; 1 = moving; 2 = ambush
-func spawn_hazard_worm(type : int) -> void:
-	branch_worm_type = type
+	enemy_type = new_enemy_type
 
 func update_acorns() -> void:
 	
@@ -264,9 +258,9 @@ func update_acorns() -> void:
 			if queue_next:
 				
 				queue_next = false
-				
 				queue_next_i -= 1
-				pick_acorn_xpos()
+				update_acorn_xpos()
+				# create acorn
 				var new_acorn = ACORN.instance()
 				new_acorn.position = Vector2(acorn_xpos, ROOM_H + 6)
 				new_acorn.queue_id = acorn_queue_active
@@ -275,6 +269,16 @@ func update_acorns() -> void:
 		else:
 			acorn_queue_active = -1
 			t_acorn.reset()
+
+func update_acorn_xpos(relative : bool = true) -> void:
+	
+	if relative:
+		
+		if g.chance(3):
+			acorn_xpos = g.normal(acorn_xpos + g.choose([-20, 20]), \
+				0, ROOM_W - 20)
+	else:
+		acorn_xpos = 20 * g.random(7)
 
 func update_area() -> void:
 	
@@ -327,16 +331,6 @@ func update_background_tree(delta) -> void:
 			i.position.y = branches[(branches.find(i) - 1 % 4)].position.y + (110 + g.random(100))
 			i.texture = g.choose(BRANCH_TYPES[area])
 
-func update_music(is_loop : bool = true, start : float = 0.0) -> void:
-	
-	if !is_loop:
-		current_player = (current_player + 1) % 2
-		get_node("MusicPlayer" + str(current_player)).volume_db = -20
-		get_node("MusicPlayer" + str(current_player)).stream = \
-			load("res://Sounds/Music/ost_" + area + ".wav")
-		t_music_trans.reset()
-	get_node("MusicPlayer" + str(current_player)).play(start)
-
 func update_distance(delta) -> void:
 	
 	distance += fall_speed * delta * 0.003125
@@ -352,18 +346,22 @@ func update_distance(delta) -> void:
 				# diamond
 				if i == 3: acorn_rarity[i] = floor(acorn_rarity[1] / 30)
 		acorn_rarity_thres += 20
-		
-	if acorn_icon_frame < 96:
-		acorn_icon_frame += 1
-	else:
-		acorn_icon_frame = 0
-	icon_acorn.frame = floor(acorn_icon_frame / 12.0)
+
+func update_music(is_loop : bool = true, start : float = 0.0) -> void:
+	
+	if !is_loop:
+		current_player = (current_player + 1) % 2
+		get_node("MusicPlayer" + str(current_player)).volume_db = -20
+		get_node("MusicPlayer" + str(current_player)).stream = \
+			load("res://Sounds/Music/ost_" + area + ".wav")
+		t_music_trans.reset()
+	get_node("MusicPlayer" + str(current_player)).play(start)
 
 func update_timers(delta) -> void:
 	
 	if t_acorn.advance(delta):
-		pick_acorn_xpos(false)
 		create_acorn_queue(4 + g.random(8))
+		update_acorn_xpos(false)
 	
 	if t_area.advance(delta):
 		update_area()
@@ -381,7 +379,7 @@ func update_timers(delta) -> void:
 		
 		if t_acc.advance(delta):
 			fall_speed += 1
-#		if t_hazard.advance(delta):
-#			spawn_hazard()
+		if t_enemy.advance(delta):
+			spawn_enemy()
 		if t_warning.advance(delta):
 			warning.hide()

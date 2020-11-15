@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Apple.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Scenes/MenuButton.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scenes/ImageButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=5]
 [ext_resource path="res://Textures/Backgrounds/cloud0.png" type="Texture" id=6]
 [ext_resource path="res://Textures/Backgrounds/cloud1.png" type="Texture" id=7]
@@ -66,14 +66,14 @@ animations = [ {
 "name": "acorn_silver",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
-"loop": true,
-"name": "acorn_diamond",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ) ],
 "loop": true,
 "name": "acorn_normal",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
+"loop": true,
+"name": "acorn_diamond",
 "speed": 5.0
 } ]
 
@@ -102,15 +102,6 @@ volume_db = -3.0
 
 [node name="SoundPlayerLong" type="AudioStreamPlayer" parent="."]
 volume_db = 4.0
-
-[node name="Restart" parent="." instance=ExtResource( 4 )]
-visible = false
-margin_left = 32.4062
-margin_top = 102.284
-margin_right = 56.4062
-margin_bottom = 139.284
-focus_mode = 0
-enabled_focus_mode = 0
 
 [node name="Background" type="Node2D" parent="."]
 
@@ -282,6 +273,12 @@ z_as_relative = false
 position = Vector2( 152.632, 25.0321 )
 frames = SubResource( 2 )
 animation = "acorn_normal"
+frame = 6
+playing = true
+
+[node name="Restart" parent="Overlay" instance=ExtResource( 4 )]
+visible = false
+position = Vector2( 80, 140 )
 
 [node name="ShowArea" type="Label" parent="Overlay"]
 visible = false
@@ -361,3 +358,4 @@ anim_offset = 1.0
 anim_offset_random = 1.0
 [connection signal="finished" from="MusicPlayer0" to="." method="_player_ended" binds= [ 0 ]]
 [connection signal="finished" from="MusicPlayer1" to="." method="_player_ended" binds= [ 1 ]]
+[connection signal="pressed" from="Overlay/Restart" to="." method="game_start"]

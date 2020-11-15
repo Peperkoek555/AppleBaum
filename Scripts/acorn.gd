@@ -1,4 +1,4 @@
-extends "res://Scripts/entity.gd"
+extends "res://Scripts/passing_object.gd"
 
 var is_eaten : bool
 var passed : bool # whether the acorn passed the threshold to let in a new acorn
@@ -37,8 +37,8 @@ func _process(delta) -> void:
 			$AnimatedSprite.scale = Vector2(t_death / 10.0, t_death / 10.0)
 			t_death -= 1
 		else:
-			destroy()
+			_destroyed()
 
-func destroy() -> void:
+func _destroyed() -> void:
 	if type == 3: main.acorn_rarity_bit = true
-	.destroy()
+	._destroyed()

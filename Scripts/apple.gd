@@ -5,7 +5,6 @@ var t_blink : Object
 var target_x : float
 
 const TIMER = preload("res://Scripts/timer.gd")
-# LOOL
 onready var image = $AnimatedSprite
 onready var main = get_parent()
 
@@ -37,7 +36,7 @@ func collide(area):
 				main.collect_acorn(area.queue_id, area.type)
 				area.is_eaten = true
 				
-		elif area.is_in_group("enemy"):
+		elif area.is_in_group("enemies"):
 			
 			$Player.play()
 			main.game_end()
