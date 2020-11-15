@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/image_button.gd" type="Script" id=1]
+[ext_resource path="res://Textures/restart_0.png" type="Texture" id=2]
+
+[node name="ImageButton" type="Sprite"]
+scale = Vector2( 2, 2 )
+texture = ExtResource( 2 )
+script = ExtResource( 1 )
+tag = "restart"
+
+[node name="Button" type="Button" parent="."]
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 56.0
+margin_bottom = 56.0
+rect_scale = Vector2( 0.25, 0.25 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="mouse_entered" from="Button" to="." method="set_toggled" binds= [ true ]]
+[connection signal="mouse_exited" from="Button" to="." method="set_toggled" binds= [ false ]]
+[connection signal="pressed" from="Button" to="." method="_pressed"]
