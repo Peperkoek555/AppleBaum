@@ -40,8 +40,8 @@ const BRANCH_TYPES = {
 				preload("res://Textures/Backgrounds/branch_1.png")],
 	"winter": [preload("res://Textures/Backgrounds/branch_winter_0.png"),
 				preload("res://Textures/Backgrounds/branch_winter_1.png")],
-	"jungle": [preload("res://Textures/Backgrounds/branch_0.png"),
-				preload("res://Textures/Backgrounds/branch_1.png")]
+	"jungle": [preload("res://Textures/Backgrounds/branch_jungle_0.png"),
+				preload("res://Textures/Backgrounds/branch_jungle_1.png")]
 }
 const CANVAS_COLORS = {
 	"forest": Color8(45, 66, 56),
