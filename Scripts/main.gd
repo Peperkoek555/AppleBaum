@@ -34,7 +34,7 @@ const ACORN_SOUND_DIAMOND = preload("res://Sounds/acorn_diamond0.wav")
 const ACORN_SOUND_GOTALL = preload("res://Sounds/complete_queue0.wav")
 const ACORN_TYPES = ["acorn_normal", "acorn_silver", "acorn_gold", "acorn_diamond"]
 const ACORN_VALUES = [1, 3, 10, 50]
-const AREA_TYPES = ["forest", "winter"]
+const AREA_TYPES = ["forest", "winter", "jungle"]
 const BRANCH_TYPES = {
 	"forest": [preload("res://Textures/Backgrounds/branch_0.png"),
 				preload("res://Textures/Backgrounds/branch_1.png")],
@@ -45,7 +45,8 @@ const BRANCH_TYPES = {
 }
 const CANVAS_COLORS = {
 	"forest": Color8(45, 66, 56),
-	"winter": Color8(181, 200, 213)
+	"winter": Color8(181, 200, 213),
+	"jungle": Color.white
 }
 enum ENEMY_TYPES {
 	DEFAULT
@@ -61,6 +62,7 @@ onready var branches = [$Background/Branch0, $Background/Branch1,
 onready var canv_trees0 = [$Background/Back00, $Background/Back10]
 onready var canv_trees1 = [$Background/Back01, $Background/Back11]
 onready var canv_trees2 = [$Background/Back02, $Background/Back12]
+onready var canv_trees3 = [$Background/Back03, $Background/Back13]
 onready var clouds = [$Background/Clouds, $Background/Clouds2]
 onready var icon_acorn = $Overlay/IconAcorn
 onready var particles = [$Background/ParticlesBack, $Overlay/ParticlesFront]
@@ -165,7 +167,7 @@ func game_start() -> void:
 	game_over = false
 	randomize()
 	
-	set_area(g.choose(["forest", "winter"])) # delete later
+	set_area("jungle")
 	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0
@@ -209,6 +211,12 @@ func set_area(area : String) -> void:
 	for i in canv_trees2:
 		if area != "winter":
 			i.texture = load("res://Textures/Backgrounds/back_" + area + "_2.png")
+			i.show()
+		else:
+			i.hide()
+	for i in canv_trees3:
+		if area == "jungle":
+			i.texture = load("res://Textures/Backgrounds/back_" + area + "_3.png")
 			i.show()
 		else:
 			i.hide()
