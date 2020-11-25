@@ -70,6 +70,7 @@ onready var player = $SoundPlayer
 onready var player_long = $SoundPlayerLong
 onready var show_score = $Overlay/ShowScore
 onready var show_acorns = $Overlay/ShowAcorns
+onready var vines = [$Background/Vines00, $Background/Vines01]
 onready var warning = $Overlay/WarningSign
 
 func _ready():
@@ -88,8 +89,8 @@ func _process(delta):
 	if !game_over:
 		update_acorns()
 	
-	update_background(delta)
 	update_distance(delta)
+	update_movement(delta)
 	update_timers(delta)
 
 func _player_ended(index : int) -> void:
@@ -198,36 +199,6 @@ func init_timers() -> void:
 func set_area(area : String) -> void:
 	
 	self.area = area
-	#$Overlay/ShowArea.text = area
-	
-	# background
-	$Background/Canvas/Canvas.color = CANVAS_COLORS[area]
-	for i in bark:
-		i.texture = load("res://Textures/Backgrounds/bark_" + area + ".png")
-	for i in canv_trees0:
-		i.texture = load("res://Textures/Backgrounds/back_" + area + "_0.png")
-	for i in canv_trees1:
-		i.texture = load("res://Textures/Backgrounds/back_" + area + "_1.png")
-	for i in canv_trees2:
-		if area != "winter":
-			i.texture = load("res://Textures/Backgrounds/back_" + area + "_2.png")
-			i.show()
-		else:
-			i.hide()
-	for i in canv_trees3:
-		if area == "jungle":
-			i.texture = load("res://Textures/Backgrounds/back_" + area + "_3.png")
-			i.show()
-		else:
-			i.hide()
-	
-	# branches
-	for i in range(0, len(branches)):
-		
-		if i == 0: branches[0].position.y = g.random(ROOM_H)
-		else: branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
-		
-		branches[i].texture = g.choose(BRANCH_TYPES[area])
 	
 	# particles
 	for i in particles:
@@ -236,7 +207,49 @@ func set_area(area : String) -> void:
 			6 + int(area == "winter")
 		i.amount = 3 + int(area == "winter")*13
 	
+	set_area_background(area)
 	update_music(false, get_node("MusicPlayer" + str(current_player)).get_playback_position())
+
+func set_area_background(area : String) -> void:
+	
+	$Background/Canvas/Canvas.color = CANVAS_COLORS[area]
+	for i in bark:
+		i.texture = load("res://Textures/Backgrounds/bark_" + area + ".png")
+	for i in canv_trees0:
+		i.texture = load("res://Textures/Backgrounds/back_" + area + "_0.png")
+	for i in canv_trees1:
+		i.texture = load("res://Textures/Backgrounds/back_" + area + "_1.png")
+	for i in canv_trees2:
+		
+		if area == "forest" || area == "jungle":
+			i.texture = load("res://Textures/Backgrounds/back_" + area + "_2.png")
+			i.show()
+		else: i.hide()
+		
+	for i in canv_trees3:
+		
+		if area == "jungle":
+			i.texture = load("res://Textures/Backgrounds/back_" + area + "_3.png")
+			i.show()
+		else: i.hide()
+	
+	# branches
+	for i in range(4):
+		
+		if i == 0: 
+			branches[0].position.y = g.random(ROOM_H)
+		else: 
+			branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
+		
+		branches[i].texture = g.choose(BRANCH_TYPES[area])
+	
+	# vines
+	for i in range(2):
+		
+		if area == "jungle":
+			spawn_vines(vines[i], branches[i + 2 * int(g.chance(2))].position.y) 
+			vines[i].show()
+		else: vines[i].hide()
 
 func show_warning(pos : Vector2) -> void:
 	
@@ -256,6 +269,9 @@ func spawn_enemy() -> void:
 			add_child(enemy_default)
 	
 	enemy_type = new_enemy_type
+
+func spawn_vines(vines : Object, on_branch_pos_y : int) -> void:
+	vines.position.y = on_branch_pos_y + 72
 
 func update_acorns() -> void:
 	
@@ -295,50 +311,6 @@ func update_area() -> void:
 		new_area = g.choose(AREA_TYPES)
 	set_area(new_area)
 
-func update_background(delta) -> void:
-	
-	update_background_tree(delta)
-	
-#	for i in clouds:
-#		i.position.x += speed_cloud * delta
-#		if i.position.x > ROOM_W:
-#			i.position.x -= ROOM_W * 2
-	
-	if game_over:
-		if fall_speed > 0:
-			fall_speed -= 2
-		else:
-			fall_speed = 0
-
-func update_background_tree(delta) -> void:
-	
-	# bark movement
-	for i in bark:
-		i.position.y -= fall_speed * delta
-		if i.position.y <= -ROOM_H:
-			i.position.y += ROOM_H * 2
-	
-	# background tree movement
-	for i in canv_trees0:
-		i.position.y -= fall_speed * delta * (60.0 / 100)
-		if i.position.y <= -ROOM_H:
-			i.position.y += ROOM_H * 2
-	for i in canv_trees1:
-		i.position.y -= fall_speed * delta * (50.0 / 100)
-		if i.position.y <= -ROOM_H:
-			i.position.y += ROOM_H * 2
-	for i in canv_trees2:
-		i.position.y -= fall_speed * delta * (40.0 / 100)
-		if i.position.y <= -ROOM_H:
-			i.position.y += ROOM_H * 2
-	
-	# branch movement
-	for i in branches:
-		i.position.y -= fall_speed * delta
-		if i.position.y <= -111:
-			i.position.y = branches[(branches.find(i) - 1 % 4)].position.y + (110 + g.random(100))
-			i.texture = g.choose(BRANCH_TYPES[area])
-
 func update_distance(delta) -> void:
 	
 	distance += fall_speed * delta * 0.003125
@@ -354,6 +326,62 @@ func update_distance(delta) -> void:
 				# diamond
 				if i == 3: acorn_rarity[i] = floor(acorn_rarity[1] / 30)
 		acorn_rarity_thres += 20
+
+func update_movement(delta) -> void:
+	
+	if game_over:
+		if fall_speed > 0:
+			fall_speed -= 2
+		else:
+			fall_speed = 0
+	
+	update_movement_tree(delta)
+
+func update_movement_tree(delta) -> void:
+	
+	var movement = fall_speed * delta
+	
+	# bark movement
+	for i in bark:
+		i.position.y -= movement
+		if i.position.y <= -ROOM_H:
+			i.position.y += ROOM_H * 2
+	
+	# branch movement
+	for i in range(4):
+		
+		branches[i].position.y -= movement
+		if branches[i].position.y <= -ROOM_H:
+			
+			branches[i].position.y = branches[(i - 1) % 4].position.y + (110 + g.random(100))
+			branches[i].texture = g.choose(BRANCH_TYPES[area])
+			
+			if area == "jungle":
+				
+				var local_vines = vines[i % 2] # vines with same mirror
+				if local_vines.position.y <= -268 && g.chance(2):
+					spawn_vines(local_vines, branches[i].position.y)
+	
+	# vine movement
+	if area == "jungle":
+		
+		for i in vines:
+			if i.position.y > -268:
+				i.position.y -= movement
+	
+	# paralax back movement
+	for i in canv_trees0:
+		i.position.y -= movement * (60.0 / 100)
+		if i.position.y <= -ROOM_H:
+			i.position.y += ROOM_H * 2
+	for i in canv_trees1:
+		i.position.y -= movement * (50.0 / 100)
+		if i.position.y <= -ROOM_H:
+			i.position.y += ROOM_H * 2
+	for i in canv_trees2:
+		i.position.y -= movement * (40.0 / 100)
+		if i.position.y <= -ROOM_H:
+			i.position.y += ROOM_H * 2
 
 func update_music(is_loop : bool = true, start : float = 0.0) -> void:
 	
@@ -388,6 +416,7 @@ func update_timers(delta) -> void:
 		if t_acc.advance(delta):
 			fall_speed += 1
 		if t_enemy.advance(delta):
-			spawn_enemy()
+			pass
+			#spawn_enemy()
 		if t_warning.advance(delta):
 			warning.hide()
