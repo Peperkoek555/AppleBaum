@@ -1,7 +1,8 @@
-extends Area2D
+extends Node2D
 
-onready var main = get_parent()
-onready var size : Vector2 # the size of the object
+export (int) var height
+
+onready var main # assigned before adding
 
 func _process(delta) -> void:
 	move(delta)
@@ -11,7 +12,6 @@ func _destroyed() -> void:
 
 func move(delta) -> void:
 	
-	if position.y + size.y > 0:
-		position.y -= main.fall_speed * delta
-	else:
+	position.y -= main.fall_speed * delta
+	if position.y + height < 0:
 		_destroyed()

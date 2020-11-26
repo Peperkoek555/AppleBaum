@@ -53,10 +53,11 @@ enum ENEMY_TYPES {
 }
 const ROOM_H = 280
 const ROOM_W = 160
+const VINE = preload("res://Scenes/Vine.tscn")
 const TIMER = preload("res://Scripts/timer.gd")
 
-onready var bark = [$Background/Tree00, $Background/Tree01,
-					$Background/Tree10, $Background/Tree11]
+onready var barks = [$Background/Bark00, $Background/Bark01,
+					 $Background/Bark10, $Background/Bark11]
 onready var branches = [$Background/Branch0, $Background/Branch1,
 						$Background/Branch2,$Background/Branch3]
 onready var canv_trees0 = [$Background/Back00, $Background/Back10]
@@ -66,11 +67,11 @@ onready var canv_trees3 = [$Background/Back03, $Background/Back13]
 onready var clouds = [$Background/Clouds, $Background/Clouds2]
 onready var icon_acorn = $Overlay/IconAcorn
 onready var particles = [$Background/ParticlesBack, $Overlay/ParticlesFront]
+onready var particles_rain = [$Background/RainBack, $Overlay/RainFront]
 onready var player = $SoundPlayer
 onready var player_long = $SoundPlayerLong
 onready var show_score = $Overlay/ShowScore
 onready var show_acorns = $Overlay/ShowAcorns
-onready var vines = [$Background/Vines00, $Background/Vines01]
 onready var warning = $Overlay/WarningSign
 
 func _ready():
@@ -147,6 +148,14 @@ func collect_acorn_sound(queue_id : int, type: int):
 		player_long.stream = ACORN_SOUND_DIAMOND
 		player_long.play()
 
+func create_acorn() -> void:
+	
+	var new_acorn = ACORN.instance()
+	new_acorn.main = self
+	new_acorn.position = Vector2(acorn_xpos, ROOM_H + 6)
+	new_acorn.queue_id = acorn_queue_active
+	add_child(new_acorn)
+
 func create_acorn_queue(queue_length : int) -> void:
 	
 	var acorn_queue_id = 0
@@ -155,6 +164,44 @@ func create_acorn_queue(queue_length : int) -> void:
 	acorn_queue_active = acorn_queue_id
 	queue_next_i = queue_length
 	acorn_queue_size[acorn_queue_id] = queue_length
+
+func create_enemy() -> void:
+	
+	var new_enemy_type : int = g.choose_weighted(enemy_weights)
+	match(new_enemy_type):
+		
+		0:
+			var enemy_default = load("res://Scenes/EnemyDefault.tscn").instance()
+			enemy_default.main = self
+			enemy_default.position = \
+				Vector2(g.random(4) * (ROOM_W / 5), ROOM_H + 32)
+			add_child(enemy_default)
+	
+	enemy_type = new_enemy_type
+
+func create_vine(pos_y : int) -> void:
+	
+	var new_vine = VINE.instance()
+	var side = g.random(1)
+	new_vine.main = self
+	new_vine.frame = g.random(5)
+	new_vine.position = Vector2([0, ROOM_W][side], pos_y)
+	new_vine.scale.x = 2 * g.bool2sign(!bool(side))
+	get_node("Background/Vines").add_child(new_vine)
+
+func cycle_branch(branch_id : int, is_reset : bool = false) -> void:
+	
+	var new_y : int
+	if is_reset && branch_id == 0: new_y = g.random(ROOM_H)
+	else:
+		new_y = branches[(branch_id - 1) % 4].position.y + (110 + g.random(100))
+	branches[branch_id].position.y = new_y
+	branches[branch_id].texture = g.choose(BRANCH_TYPES[area])
+	
+	# vines
+	if area == "jungle":
+		for i in range(1 + g.choose_weighted([4, 3, 2])):
+			create_vine(new_y + g.random(128) + i * (32 + g.random(32)))
 
 func game_end() -> void:
 	
@@ -201,11 +248,16 @@ func set_area(area : String) -> void:
 	self.area = area
 	
 	# particles
-	for i in particles:
-		i.texture = load("res://Textures/particles_" + area + ".png")
-		i.material.particles_anim_h_frames = \
-			6 + int(area == "winter")
-		i.amount = 3 + int(area == "winter")*13
+	for i in particles_rain: 
+		i.visible = (area == "jungle")
+	
+	if area != "jungle":
+		
+		for i in particles:
+			i.texture = load("res://Textures/particles_" + area + ".png")
+			i.material.particles_anim_h_frames = \
+				6 + int(area == "winter")
+			i.amount = 3 + int(area == "winter") * 13
 	
 	set_area_background(area)
 	update_music(false, get_node("MusicPlayer" + str(current_player)).get_playback_position())
@@ -213,7 +265,7 @@ func set_area(area : String) -> void:
 func set_area_background(area : String) -> void:
 	
 	$Background/Canvas/Canvas.color = CANVAS_COLORS[area]
-	for i in bark:
+	for i in barks:
 		i.texture = load("res://Textures/Backgrounds/bark_" + area + ".png")
 	for i in canv_trees0:
 		i.texture = load("res://Textures/Backgrounds/back_" + area + "_0.png")
@@ -235,43 +287,13 @@ func set_area_background(area : String) -> void:
 	
 	# branches
 	for i in range(4):
-		
-		if i == 0: 
-			branches[0].position.y = g.random(ROOM_H)
-		else: 
-			branches[i].position.y = branches[i - 1].position.y + (140 + 40) 
-		
-		branches[i].texture = g.choose(BRANCH_TYPES[area])
-	
-	# vines
-	for i in range(2):
-		
-		if area == "jungle":
-			spawn_vines(vines[i], branches[i + 2 * int(g.chance(2))].position.y) 
-			vines[i].show()
-		else: vines[i].hide()
+		cycle_branch(i, true)
 
 func show_warning(pos : Vector2) -> void:
 	
 	warning.position = pos
 	warning.show()
 	t_warning.reset()
-
-func spawn_enemy() -> void:
-	
-	var new_enemy_type : int = g.choose_weighted(enemy_weights)
-	match(new_enemy_type):
-		
-		0:
-			var enemy_default = load("res://Scenes/EnemyDefault.tscn").instance()
-			enemy_default.position = \
-				Vector2(g.random(4) * (ROOM_W / 5), ROOM_H + 32)
-			add_child(enemy_default)
-	
-	enemy_type = new_enemy_type
-
-func spawn_vines(vines : Object, on_branch_pos_y : int) -> void:
-	vines.position.y = on_branch_pos_y + 72
 
 func update_acorns() -> void:
 	
@@ -284,11 +306,7 @@ func update_acorns() -> void:
 				queue_next = false
 				queue_next_i -= 1
 				update_acorn_xpos()
-				# create acorn
-				var new_acorn = ACORN.instance()
-				new_acorn.position = Vector2(acorn_xpos, ROOM_H + 6)
-				new_acorn.queue_id = acorn_queue_active
-				add_child(new_acorn)
+				create_acorn()
 			
 		else:
 			acorn_queue_active = -1
@@ -342,7 +360,7 @@ func update_movement_tree(delta) -> void:
 	var movement = fall_speed * delta
 	
 	# bark movement
-	for i in bark:
+	for i in barks:
 		i.position.y -= movement
 		if i.position.y <= -ROOM_H:
 			i.position.y += ROOM_H * 2
@@ -351,23 +369,9 @@ func update_movement_tree(delta) -> void:
 	for i in range(4):
 		
 		branches[i].position.y -= movement
-		if branches[i].position.y <= -ROOM_H:
-			
-			branches[i].position.y = branches[(i - 1) % 4].position.y + (110 + g.random(100))
-			branches[i].texture = g.choose(BRANCH_TYPES[area])
-			
-			if area == "jungle":
-				
-				var local_vines = vines[i % 2] # vines with same mirror
-				if local_vines.position.y <= -268 && g.chance(2):
-					spawn_vines(local_vines, branches[i].position.y)
-	
-	# vine movement
-	if area == "jungle":
 		
-		for i in vines:
-			if i.position.y > -268:
-				i.position.y -= movement
+		if branches[i].position.y <= -ROOM_H:
+			cycle_branch(i)
 	
 	# paralax back movement
 	for i in canv_trees0:
@@ -417,6 +421,6 @@ func update_timers(delta) -> void:
 			fall_speed += 1
 		if t_enemy.advance(delta):
 			pass
-			#spawn_enemy()
+			#create_enemy()
 		if t_warning.advance(delta):
 			warning.hide()

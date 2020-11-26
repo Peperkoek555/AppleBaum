@@ -21,6 +21,7 @@ animations = [ {
 scale = Vector2( 2, 2 )
 z_index = 2
 script = ExtResource( 1 )
+height = 32
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 8, 8 )

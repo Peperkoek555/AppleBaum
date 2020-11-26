@@ -23,7 +23,6 @@ func _ready():
 			$AnimatedSprite.animation = "acorn_diamond"
 			$Glow.animation = "glow_diamond"
 			$Glow.show()
-	size = Vector2(20, 20)
 
 func _process(delta) -> void:
 	

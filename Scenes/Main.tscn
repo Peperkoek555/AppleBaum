@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Apple.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Textures/Backgrounds/back_jungle_vines.png" type="Texture" id=3]
+[ext_resource path="res://Textures/particles_rain.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/ImageButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=5]
 [ext_resource path="res://Textures/Backgrounds/cloud0.png" type="Texture" id=6]
@@ -62,11 +62,6 @@ animations = [ {
 "name": "acorn_gold",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
-"loop": true,
-"name": "acorn_silver",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ) ],
 "loop": true,
 "name": "acorn_normal",
@@ -75,6 +70,11 @@ animations = [ {
 "frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
 "loop": true,
 "name": "acorn_diamond",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
+"loop": true,
+"name": "acorn_silver",
 "speed": 5.0
 } ]
 
@@ -105,9 +105,10 @@ volume_db = -3.0
 volume_db = 4.0
 
 [node name="Background" type="Node2D" parent="."]
+z_index = -10
 
 [node name="Canvas" type="Node2D" parent="Background"]
-z_index = -1000
+z_index = -10
 
 [node name="Canvas" type="ColorRect" parent="Background/Canvas"]
 margin_right = 160.0
@@ -132,7 +133,7 @@ z_index = -1
 texture = ExtResource( 7 )
 centered = false
 
-[node name="Tree00" type="Sprite" parent="Background"]
+[node name="Bark00" type="Sprite" parent="Background"]
 scale = Vector2( 2, 2 )
 texture = ExtResource( 8 )
 centered = false
@@ -140,7 +141,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Tree01" type="Sprite" parent="Background"]
+[node name="Bark01" type="Sprite" parent="Background"]
 position = Vector2( 160, 0 )
 rotation = -3.14159
 scale = Vector2( 2, -2 )
@@ -150,7 +151,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Tree10" type="Sprite" parent="Background"]
+[node name="Bark10" type="Sprite" parent="Background"]
 position = Vector2( 0, 280 )
 scale = Vector2( 2, 2 )
 texture = ExtResource( 8 )
@@ -159,7 +160,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Tree11" type="Sprite" parent="Background"]
+[node name="Bark11" type="Sprite" parent="Background"]
 position = Vector2( 160, 280 )
 rotation = -3.14159
 scale = Vector2( 2, -2 )
@@ -172,6 +173,7 @@ __meta__ = {
 [node name="Branch0" type="Sprite" parent="Background"]
 position = Vector2( 26, 32 )
 scale = Vector2( 2, 2 )
+z_index = 2
 texture = ExtResource( 9 )
 centered = false
 
@@ -179,6 +181,7 @@ centered = false
 position = Vector2( 134, 180 )
 rotation = -3.14159
 scale = Vector2( 2, -2 )
+z_index = 2
 texture = ExtResource( 10 )
 centered = false
 __meta__ = {
@@ -188,6 +191,7 @@ __meta__ = {
 [node name="Branch2" type="Sprite" parent="Background"]
 position = Vector2( 26, 300 )
 scale = Vector2( 2, 2 )
+z_index = 2
 texture = ExtResource( 9 )
 centered = false
 __meta__ = {
@@ -197,6 +201,7 @@ __meta__ = {
 [node name="Branch3" type="Sprite" parent="Background"]
 position = Vector2( 134, 400 )
 scale = Vector2( -2, 2 )
+z_index = 2
 texture = ExtResource( 10 )
 centered = false
 __meta__ = {
@@ -282,6 +287,7 @@ __meta__ = {
 }
 
 [node name="ParticlesBack" type="CPUParticles2D" parent="Background"]
+visible = false
 material = SubResource( 1 )
 position = Vector2( 190, -30 )
 z_index = -1
@@ -302,19 +308,26 @@ scale_amount = 2.0
 anim_offset = 1.0
 anim_offset_random = 1.0
 
-[node name="Vines00" type="Sprite" parent="Background"]
-visible = false
-position = Vector2( 0, -268 )
-scale = Vector2( 2, 2 )
+[node name="RainBack" type="CPUParticles2D" parent="Background"]
+material = SubResource( 1 )
+position = Vector2( 167, -30 )
+z_index = -1
+amount = 15
+lifetime = 2.6
 texture = ExtResource( 3 )
-centered = false
+emission_shape = 2
+emission_rect_extents = Vector2( 140, 1 )
+direction = Vector2( -7, 15 )
+spread = 0.0
+gravity = Vector2( -7, 15 )
+initial_velocity = 200.0
+angle = -20.0
+scale_amount = 2.0
+anim_offset = 1.0
+anim_offset_random = 1.0
 
-[node name="Vines01" type="Sprite" parent="Background"]
-visible = false
-position = Vector2( 160, -268 )
-scale = Vector2( -2, 2 )
-texture = ExtResource( 3 )
-centered = false
+[node name="Vines" type="Node2D" parent="Background"]
+z_index = 1
 
 [node name="Overlay" type="Node2D" parent="."]
 z_index = 5
@@ -324,7 +337,6 @@ z_as_relative = false
 position = Vector2( 152.632, 25.0321 )
 frames = SubResource( 2 )
 animation = "acorn_normal"
-frame = 3
 playing = true
 
 [node name="Restart" parent="Overlay" instance=ExtResource( 4 )]
@@ -386,10 +398,10 @@ __meta__ = {
 visible = false
 position = Vector2( 34.794, 11.7486 )
 frames = SubResource( 3 )
-frame = 1
 playing = true
 
 [node name="ParticlesFront" type="CPUParticles2D" parent="Overlay"]
+visible = false
 material = SubResource( 1 )
 position = Vector2( 190, -30 )
 amount = 13
@@ -405,6 +417,24 @@ angular_velocity = 160.0
 angular_velocity_random = 1.0
 angle = 45.0
 angle_random = 1.0
+scale_amount = 2.0
+anim_offset = 1.0
+anim_offset_random = 1.0
+
+[node name="RainFront" type="CPUParticles2D" parent="Overlay"]
+material = SubResource( 1 )
+position = Vector2( 167, -30 )
+z_index = -1
+amount = 15
+lifetime = 2.6
+texture = ExtResource( 3 )
+emission_shape = 2
+emission_rect_extents = Vector2( 140, 1 )
+direction = Vector2( -7, 15 )
+spread = 0.0
+gravity = Vector2( -7, 15 )
+initial_velocity = 200.0
+angle = -20.0
 scale_amount = 2.0
 anim_offset = 1.0
 anim_offset_random = 1.0
