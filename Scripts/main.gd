@@ -53,7 +53,6 @@ enum ENEMY_TYPES {
 }
 const ROOM_H = 280
 const ROOM_W = 160
-const VINE = preload("res://Scenes/Vine.tscn")
 const TIMER = preload("res://Scripts/timer.gd")
 
 onready var barks = [$Background/Bark00, $Background/Bark01,
@@ -179,29 +178,19 @@ func create_enemy() -> void:
 	
 	enemy_type = new_enemy_type
 
-func create_vine(pos_y : int) -> void:
-	
-	var new_vine = VINE.instance()
-	var side = g.random(1)
-	new_vine.main = self
-	new_vine.frame = g.random(5)
-	new_vine.position = Vector2([0, ROOM_W][side], pos_y)
-	new_vine.scale.x = 2 * g.bool2sign(!bool(side))
-	get_node("Background/Vines").add_child(new_vine)
-
 func cycle_branch(branch_id : int, is_reset : bool = false) -> void:
 	
-	var new_y : int
-	if is_reset && branch_id == 0: new_y = g.random(ROOM_H)
+	var branch_y : int
+	if is_reset && branch_id == 0: 
+		branch_y = g.random(ROOM_H)
 	else:
-		new_y = branches[(branch_id - 1) % 4].position.y + (110 + g.random(100))
-	branches[branch_id].position.y = new_y
-	branches[branch_id].texture = g.choose(BRANCH_TYPES[area])
+		var prev_branch = branches[(branch_id - 1) % 4]
+		branch_y = prev_branch.position.y + prev_branch.branch_hspace
 	
-	# vines
-	if area == "jungle":
-		for i in range(1 + g.choose_weighted([4, 3, 2])):
-			create_vine(new_y + g.random(128) + i * (32 + g.random(32)))
+	branches[branch_id]._cycle()
+	branches[branch_id].position.y = branch_y
+	branches[branch_id].set_texture(g.choose(BRANCH_TYPES[area]))
+	branches[branch_id].set_has_vines(area == "jungle")
 
 func game_end() -> void:
 	
@@ -248,6 +237,8 @@ func set_area(area : String) -> void:
 	self.area = area
 	
 	# particles
+	for i in particles:
+		i.visible = (area != "jungle")
 	for i in particles_rain: 
 		i.visible = (area == "jungle")
 	

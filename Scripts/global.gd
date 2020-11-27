@@ -1,9 +1,9 @@
 extends Node
 
-const SAVE_PATH = "res://config.cfg"
 var _config_file = ConfigFile.new()
-
 var distance_best : int = 0
+
+const SAVE_PATH = "res://config.cfg"
 
 func load_settings() -> void:
 	
