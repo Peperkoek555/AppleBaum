@@ -19,12 +19,12 @@ func set_has_vines(has_vines : bool) -> void:
 			
 			var vine_i = get_node("Vine" + str(side) + str(i))
 			vine_i.hide()
-			if has_vines && vine_y <= branch_hspace - 68:
+			if has_vines && vine_y <= branch_hspace / 2 - 34:
 				
 				vine_i.frame = g.random(5)
 				vine_i.position.y = vine_y
 				vine_i.show()
-				vine_y += 68 + g.random(68)
+				vine_y += 34 + g.random(34)
 
 func set_texture(new_texture : Texture) -> void:
 	texture = new_texture
