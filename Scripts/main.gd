@@ -58,7 +58,7 @@ const TIMER = preload("res://Scripts/timer.gd")
 onready var barks = [$Background/Bark00, $Background/Bark01,
 					 $Background/Bark10, $Background/Bark11]
 onready var branches = [$Background/Branch0, $Background/Branch1,
-						$Background/Branch2,$Background/Branch3]
+						$Background/Branch2, $Background/Branch3]
 onready var canv_trees0 = [$Background/Back00, $Background/Back10]
 onready var canv_trees1 = [$Background/Back01, $Background/Back11]
 onready var canv_trees2 = [$Background/Back02, $Background/Back12]
@@ -210,7 +210,7 @@ func game_start() -> void:
 	distance = 0
 	acorn_rarity = [30, 0, 0, 0]
 	acorn_rarity_thres = 5
-	fall_speed = 125
+	fall_speed = 120
 	speed_cloud = 10
 	init_timers()
 	
@@ -360,7 +360,6 @@ func update_movement_tree(delta) -> void:
 	for i in range(4):
 		
 		branches[i].position.y -= movement
-		
 		if branches[i].position.y <= -ROOM_H:
 			cycle_branch(i)
 	
