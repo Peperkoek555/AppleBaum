@@ -65,8 +65,6 @@ onready var canv_trees2 = [$Background/Back02, $Background/Back12]
 onready var canv_trees3 = [$Background/Back03, $Background/Back13]
 onready var clouds = [$Background/Clouds, $Background/Clouds2]
 onready var icon_acorn = $Overlay/IconAcorn
-onready var particles = [$Background/ParticlesBack, $Overlay/ParticlesFront]
-onready var particles_rain = [$Background/RainBack, $Overlay/RainFront]
 onready var player = $SoundPlayer
 onready var player_long = $SoundPlayerLong
 onready var show_score = $Overlay/ShowScore
@@ -204,7 +202,7 @@ func game_start() -> void:
 	game_over = false
 	randomize()
 	
-	set_area("jungle")
+	set_area("winter")
 	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0
@@ -235,22 +233,8 @@ func init_timers() -> void:
 func set_area(area : String) -> void:
 	
 	self.area = area
-	
-	# particles
-	for i in particles:
-		i.visible = (area != "jungle")
-	for i in particles_rain: 
-		i.visible = (area == "jungle")
-	
-	if area != "jungle":
-		
-		for i in particles:
-			i.texture = load("res://Textures/particles_" + area + ".png")
-			i.material.particles_anim_h_frames = \
-				6 + int(area == "winter")
-			i.amount = 3 + int(area == "winter") * 13
-	
 	set_area_background(area)
+	$Particles.set_area(area)
 	update_music(false, get_node("MusicPlayer" + str(current_player)).get_playback_position())
 
 func set_area_background(area : String) -> void:
@@ -410,7 +394,6 @@ func update_timers(delta) -> void:
 		if t_acc.advance(delta):
 			fall_speed += 1
 		if t_enemy.advance(delta):
-			pass
-			#create_enemy()
+			create_enemy()
 		if t_warning.advance(delta):
 			warning.hide()

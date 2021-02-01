@@ -1,8 +1,8 @@
-[gd_scene load_steps=51 format=2]
+[gd_scene load_steps=49 format=2]
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Apple.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Textures/particles_rain.png" type="Texture" id=3]
+[ext_resource path="res://Scenes/Particles.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/ImageButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=5]
 [ext_resource path="res://Textures/Backgrounds/cloud0.png" type="Texture" id=6]
@@ -46,34 +46,27 @@
 [ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=46]
 [ext_resource path="res://Textures/s_warning_0.png" type="Texture" id=47]
 [ext_resource path="res://Textures/s_warning_1.png" type="Texture" id=48]
-[ext_resource path="res://Textures/particles_forest.png" type="Texture" id=49]
-
-[sub_resource type="CanvasItemMaterial" id=1]
-particles_animation = true
-particles_anim_h_frames = 6
-particles_anim_v_frames = 1
-particles_anim_loop = false
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
-"loop": true,
-"name": "acorn_diamond",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ), ExtResource( 33 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 36 ), ExtResource( 37 ) ],
 "loop": true,
 "name": "acorn_gold",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
+"frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
 "loop": true,
-"name": "acorn_silver",
+"name": "acorn_diamond",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ) ],
 "loop": true,
 "name": "acorn_normal",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
+"loop": true,
+"name": "acorn_silver",
 "speed": 5.0
 } ]
 
@@ -261,46 +254,6 @@ position = Vector2( 0, 250 )
 position = Vector2( 160, 400 )
 scale = Vector2( -2, 2 )
 
-[node name="ParticlesBack" type="CPUParticles2D" parent="Background"]
-material = SubResource( 1 )
-position = Vector2( 190, -30 )
-z_index = -1
-amount = 13
-lifetime = 5.5
-texture = ExtResource( 49 )
-emission_shape = 2
-emission_rect_extents = Vector2( 140, 1 )
-direction = Vector2( -1, 1.75 )
-spread = 10.0
-gravity = Vector2( -5, 8.75 )
-initial_velocity = 50.0
-angular_velocity = 160.0
-angular_velocity_random = 1.0
-angle = 45.0
-angle_random = 1.0
-scale_amount = 2.0
-anim_offset = 1.0
-anim_offset_random = 1.0
-
-[node name="RainBack" type="CPUParticles2D" parent="Background"]
-visible = false
-material = SubResource( 1 )
-position = Vector2( 167, -30 )
-z_index = -1
-amount = 15
-lifetime = 2.6
-texture = ExtResource( 3 )
-emission_shape = 2
-emission_rect_extents = Vector2( 140, 1 )
-direction = Vector2( -7, 15 )
-spread = 0.0
-gravity = Vector2( -7, 15 )
-initial_velocity = 200.0
-angle = -20.0
-scale_amount = 2.0
-anim_offset = 1.0
-anim_offset_random = 1.0
-
 [node name="Vines" type="Node2D" parent="Background"]
 z_index = 1
 
@@ -312,7 +265,7 @@ z_as_relative = false
 position = Vector2( 152.632, 25.0321 )
 frames = SubResource( 2 )
 animation = "acorn_normal"
-frame = 3
+frame = 2
 playing = true
 
 [node name="Restart" parent="Overlay" instance=ExtResource( 4 )]
@@ -374,47 +327,9 @@ __meta__ = {
 visible = false
 position = Vector2( 34.794, 11.7486 )
 frames = SubResource( 3 )
-frame = 1
 playing = true
 
-[node name="ParticlesFront" type="CPUParticles2D" parent="Overlay"]
-material = SubResource( 1 )
-position = Vector2( 190, -30 )
-amount = 13
-lifetime = 5.5
-texture = ExtResource( 49 )
-emission_shape = 2
-emission_rect_extents = Vector2( 140, 1 )
-direction = Vector2( -1, 1.75 )
-spread = 10.0
-gravity = Vector2( -5, 8.75 )
-initial_velocity = 50.0
-angular_velocity = 160.0
-angular_velocity_random = 1.0
-angle = 45.0
-angle_random = 1.0
-scale_amount = 2.0
-anim_offset = 1.0
-anim_offset_random = 1.0
-
-[node name="RainFront" type="CPUParticles2D" parent="Overlay"]
-visible = false
-material = SubResource( 1 )
-position = Vector2( 167, -30 )
-z_index = -1
-amount = 15
-lifetime = 2.6
-texture = ExtResource( 3 )
-emission_shape = 2
-emission_rect_extents = Vector2( 140, 1 )
-direction = Vector2( -7, 15 )
-spread = 0.0
-gravity = Vector2( -7, 15 )
-initial_velocity = 200.0
-angle = -20.0
-scale_amount = 2.0
-anim_offset = 1.0
-anim_offset_random = 1.0
+[node name="Particles" parent="." instance=ExtResource( 3 )]
 [connection signal="finished" from="MusicPlayer0" to="." method="_player_ended" binds= [ 0 ]]
 [connection signal="finished" from="MusicPlayer1" to="." method="_player_ended" binds= [ 1 ]]
 [connection signal="pressed" from="Overlay/Restart" to="." method="game_start"]
