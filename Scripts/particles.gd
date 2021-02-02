@@ -15,8 +15,10 @@ func create_layers() -> void:
 		for P in parents:
 			
 			var NewParticle = P.duplicate()
+			NewParticle.initial_velocity = P.initial_velocity - (i + 1)
 			NewParticle.modulate = Color(hue_shift, hue_shift, hue_shift, 1)
 			NewParticle.name = P.name.left(P.name.length() - 1) + str(i + 1)
+			NewParticle.preprocess = 5 + g.randomf(5)
 			NewParticle.scale_amount = 2 - i * 0.5
 			NewParticle.z_index = z_idx
 			NewParticle.show()
