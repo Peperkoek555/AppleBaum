@@ -201,7 +201,7 @@ func game_start() -> void:
 	game_over = false
 	randomize()
 	
-	set_area("winter")
+	set_area("forest")
 	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0
@@ -343,7 +343,7 @@ func update_movement_tree(delta) -> void:
 	for i in range(4):
 		
 		branches[i].position.y -= movement
-		if branches[i].position.y <= -ROOM_H:
+		if branches[i].position.y <= -112:
 			cycle_branch(i)
 	
 	# paralax back movement

@@ -4,25 +4,26 @@
 [ext_resource path="res://Scripts/particles.gd" type="Script" id=2]
 [ext_resource path="res://Textures/particles_rain.png" type="Texture" id=3]
 
-[sub_resource type="CanvasItemMaterial" id=2]
+[sub_resource type="CanvasItemMaterial" id=1]
 particles_animation = true
 particles_anim_h_frames = 3
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
-[sub_resource type="CanvasItemMaterial" id=1]
+[sub_resource type="CanvasItemMaterial" id=2]
 particles_animation = true
 particles_anim_h_frames = 6
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [node name="Particles" type="Node2D"]
-z_index = 5
 script = ExtResource( 2 )
 
-[node name="Rain" type="CPUParticles2D" parent="."]
-material = SubResource( 2 )
+[node name="Rain0" type="CPUParticles2D" parent="."]
+material = SubResource( 1 )
 position = Vector2( 80, -8 )
+z_index = 5
+amount = 4
 lifetime = 2.6
 texture = ExtResource( 3 )
 emission_shape = 2
@@ -33,9 +34,10 @@ initial_velocity = 5.0
 anim_offset = 1.0
 anim_offset_random = 1.0
 
-[node name="WindParticles" type="CPUParticles2D" parent="."]
-material = SubResource( 1 )
+[node name="WindParticles0" type="CPUParticles2D" parent="."]
+material = SubResource( 2 )
 position = Vector2( 190, -30 )
+z_index = 5
 amount = 13
 lifetime = 5.5
 texture = ExtResource( 1 )

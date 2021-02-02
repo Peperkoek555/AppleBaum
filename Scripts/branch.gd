@@ -1,6 +1,6 @@
 extends Sprite
 
-var branch_hspace
+var branch_hspace : int
 var has_vines : bool = false
 
 func _ready() -> void:
