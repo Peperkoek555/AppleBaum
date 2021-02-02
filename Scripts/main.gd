@@ -170,8 +170,7 @@ func create_enemy() -> void:
 		0:
 			var enemy_default = load("res://Scenes/EnemyDefault.tscn").instance()
 			enemy_default.main = self
-			enemy_default.position = \
-				Vector2(g.random(4) * (ROOM_W / 5), ROOM_H + 32)
+			enemy_default.rand_position(Vector2(ROOM_W, ROOM_H), 5)
 			add_child(enemy_default)
 	
 	enemy_type = new_enemy_type

@@ -16,6 +16,7 @@ func create_layers() -> void:
 			#NewParticle.modulate = Color(hue_shift, hue_shift, hue_shift, 1)
 			NewParticle.name = str(i)
 			NewParticle.scale_amount = 2 - i * 0.2
+			NewParticle.visible = true
 			NewParticle.z_as_relative = false
 			NewParticle.z_index = z
 			print(NewParticle)
