@@ -201,7 +201,7 @@ func game_start() -> void:
 	game_over = false
 	randomize()
 	
-	set_area("forest")
+	set_area("jungle")
 	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0

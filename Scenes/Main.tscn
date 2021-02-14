@@ -265,7 +265,7 @@ z_as_relative = false
 position = Vector2( 152.632, 25.0321 )
 frames = SubResource( 1 )
 animation = "acorn_normal"
-frame = 2
+frame = 7
 playing = true
 
 [node name="Restart" parent="Overlay" instance=ExtResource( 4 )]
@@ -327,6 +327,7 @@ __meta__ = {
 visible = false
 position = Vector2( 34.794, 11.7486 )
 frames = SubResource( 2 )
+frame = 1
 playing = true
 
 [node name="Particles" parent="." instance=ExtResource( 3 )]
