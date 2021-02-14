@@ -15,7 +15,6 @@ func rand_position(room_size : Vector2, no_rows : int) -> void:
 	for i in range(min(abs(row - 0), abs(row - (no_rows - 1)))):
 		
 		var NewBody = $Body.duplicate()
-		NewBody.modulate = Color(1, 1, 1, 0.7)
 		NewBody.play()
 		NewBody.position = Vector2.LEFT * (width / 2) * (i + 1)
 		NewBody.show()

@@ -9,11 +9,11 @@ onready var image = $AnimatedSprite
 onready var main = get_parent()
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func _ready() -> void:
 	t_blink = TIMER.new()
 	t_blink.init(3, 1)
 
-func _process(delta):
+func _process(delta) -> void:
 	
 	follow_mouse()
 	match t_blink.advance_perc(delta, [0.97, 1.0]):
@@ -27,7 +27,7 @@ func _process(delta):
 			image.play("idle")
 			image.frame = frame
 
-func collide(area):
+func collide(area : Node) -> void:
 	
 	if !main.game_over:
 		
