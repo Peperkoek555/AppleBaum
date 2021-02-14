@@ -4,7 +4,7 @@
 [ext_resource path="res://Textures/worm.png" type="Texture" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 7.89098
+radius = 6.08258
 
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 2 )
@@ -115,7 +115,7 @@ shape = SubResource( 1 )
 
 [node name="Head" type="AnimatedSprite" parent="."]
 frames = SubResource( 12 )
-frame = 9
+frame = 1
 playing = true
 centered = false
 
