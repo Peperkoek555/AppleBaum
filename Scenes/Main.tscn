@@ -59,14 +59,14 @@ animations = [ {
 "name": "acorn_normal",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
-"loop": true,
-"name": "acorn_diamond",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 5 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 17 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 19 ) ],
 "loop": true,
 "name": "acorn_silver",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ],
+"loop": true,
+"name": "acorn_diamond",
 "speed": 5.0
 } ]
 
@@ -265,7 +265,7 @@ z_as_relative = false
 position = Vector2( 152.632, 25.0321 )
 frames = SubResource( 1 )
 animation = "acorn_normal"
-frame = 2
+frame = 6
 playing = true
 
 [node name="Restart" parent="Overlay" instance=ExtResource( 4 )]
