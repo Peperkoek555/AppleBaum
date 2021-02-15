@@ -170,7 +170,7 @@ func create_enemy() -> void:
 		0:
 			var enemy_default = load("res://Scenes/EnemyDefault.tscn").instance()
 			enemy_default.main = self
-			enemy_default.rand_position(Vector2(ROOM_W, ROOM_H), 5)
+			enemy_default._created(area, Vector2(ROOM_W, ROOM_H), 5)
 			add_child(enemy_default)
 	
 	enemy_type = new_enemy_type
@@ -201,7 +201,7 @@ func game_start() -> void:
 	game_over = false
 	randomize()
 	
-	set_area("jungle")
+	set_area("winter")
 	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0
