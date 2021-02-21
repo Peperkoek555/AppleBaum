@@ -32,7 +32,7 @@ const ACORN = preload("res://Scenes/Acorn.tscn")
 const ACORN_SOUND_COLLECT = preload("res://Sounds/acorn0galm.wav")
 const ACORN_SOUND_DIAMOND = preload("res://Sounds/acorn_diamond0.wav")
 const ACORN_SOUND_GOTALL = preload("res://Sounds/complete_queue0.wav")
-const ACORN_TYPES = ["acorn_normal", "acorn_silver", "acorn_gold", "acorn_diamond"]
+const ACORN_TYPES = ["default", "silver", "gold", "diamond"]
 const ACORN_VALUES = [1, 3, 10, 50]
 const AREA_TYPES = ["forest", "winter", "jungle"]
 const BRANCH_TYPES = {
@@ -201,7 +201,7 @@ func game_start() -> void:
 	game_over = false
 	randomize()
 	
-	set_area("winter")
+	set_area("jungle")
 	update_acorn_xpos(false)
 	acorns = 0
 	distance = 0

@@ -15,6 +15,8 @@ func _created(area : String, room_size : Vector2, no_rows : int) -> void:
 			_created_body(no_rows, row, width)
 		"winter":
 			_created_head(false, room_size, width, height, row)
+		"jungle":
+			_created_head(false, room_size, width, height, row)
 	
 	$Head.frame = 0
 	$BodyTmp.queue_free() 

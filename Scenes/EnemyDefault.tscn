@@ -1,59 +1,61 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://Scripts/enemy_default.gd" type="Script" id=1]
 [ext_resource path="res://Textures/worm.png" type="Texture" id=2]
 [ext_resource path="res://Textures/snow_spike.png" type="Texture" id=3]
+[ext_resource path="res://Textures/toekan_1.png" type="Texture" id=4]
+[ext_resource path="res://Textures/toekan_0.png" type="Texture" id=5]
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 6.08258
-
-[sub_resource type="AtlasTexture" id=2]
+[sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 2 )
 region = Rect2( 0, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=3]
+[sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 2 )
 region = Rect2( 16, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=4]
+[sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 2 )
 region = Rect2( 32, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=5]
+[sub_resource type="AtlasTexture" id=4]
 atlas = ExtResource( 2 )
 region = Rect2( 48, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=6]
+[sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 2 )
 region = Rect2( 64, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=7]
+[sub_resource type="AtlasTexture" id=6]
 atlas = ExtResource( 2 )
 region = Rect2( 80, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=8]
+[sub_resource type="AtlasTexture" id=7]
 atlas = ExtResource( 2 )
 region = Rect2( 96, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=9]
+[sub_resource type="AtlasTexture" id=8]
 atlas = ExtResource( 2 )
 region = Rect2( 112, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=10]
+[sub_resource type="AtlasTexture" id=9]
 atlas = ExtResource( 2 )
 region = Rect2( 128, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=11]
+[sub_resource type="AtlasTexture" id=10]
 atlas = ExtResource( 2 )
 region = Rect2( 144, 16, 16, 16 )
 
-[sub_resource type="SpriteFrames" id=12]
+[sub_resource type="SpriteFrames" id=11]
 animations = [ {
-"frames": [ SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ) ],
+"frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ) ],
 "loop": true,
 "name": "forest",
 "speed": 12.0
 } ]
+
+[sub_resource type="CircleShape2D" id=12]
+radius = 6.08258
 
 [sub_resource type="AtlasTexture" id=13]
 atlas = ExtResource( 2 )
@@ -106,6 +108,11 @@ animations = [ {
 "loop": true,
 "name": "forest",
 "speed": 12.0
+}, {
+"frames": [ ExtResource( 5 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "jungle",
+"speed": 3.0
 } ]
 
 [node name="EnemyDefault" type="Area2D" groups=[
@@ -115,18 +122,19 @@ scale = Vector2( 2, 2 )
 script = ExtResource( 1 )
 height = 32
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 8, 8 )
-shape = SubResource( 1 )
-
 [node name="BodyTmp" type="AnimatedSprite" parent="."]
 visible = false
-frames = SubResource( 12 )
+frames = SubResource( 11 )
 animation = "forest"
 centered = false
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 8, 8 )
+shape = SubResource( 12 )
+
 [node name="Head" type="AnimatedSprite" parent="."]
 frames = SubResource( 23 )
-animation = "winter"
+animation = "jungle"
+frame = 1
 playing = true
 centered = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://Scripts/acorn.gd" type="Script" id=1]
 [ext_resource path="res://Textures/candy_glow_1.png" type="Texture" id=2]
@@ -7,38 +7,7 @@
 [ext_resource path="res://Textures/candy_glow_silver_2.png" type="Texture" id=5]
 [ext_resource path="res://Textures/candy_glow_diamond_1.png" type="Texture" id=6]
 [ext_resource path="res://Textures/candy_glow_diamond_2.png" type="Texture" id=7]
-[ext_resource path="res://Textures/acorn_gold_0.png" type="Texture" id=8]
-[ext_resource path="res://Textures/acorn_gold_1.png" type="Texture" id=9]
-[ext_resource path="res://Textures/acorn_gold_2.png" type="Texture" id=10]
-[ext_resource path="res://Textures/acorn_gold_3.png" type="Texture" id=11]
-[ext_resource path="res://Textures/acorn_gold_4.png" type="Texture" id=12]
-[ext_resource path="res://Textures/acorn_gold_5.png" type="Texture" id=13]
-[ext_resource path="res://Textures/acorn_gold_6.png" type="Texture" id=14]
-[ext_resource path="res://Textures/acorn_gold_7.png" type="Texture" id=15]
-[ext_resource path="res://Textures/acorn_normal_0.png" type="Texture" id=16]
-[ext_resource path="res://Textures/acorn_normal_1.png" type="Texture" id=17]
-[ext_resource path="res://Textures/acorn_normal_2.png" type="Texture" id=18]
-[ext_resource path="res://Textures/acorn_normal_3.png" type="Texture" id=19]
-[ext_resource path="res://Textures/acorn_normal_4.png" type="Texture" id=20]
-[ext_resource path="res://Textures/acorn_normal_5.png" type="Texture" id=21]
-[ext_resource path="res://Textures/acorn_normal_6.png" type="Texture" id=22]
-[ext_resource path="res://Textures/acorn_normal_7.png" type="Texture" id=23]
-[ext_resource path="res://Textures/acorn_silver_0.png" type="Texture" id=24]
-[ext_resource path="res://Textures/acorn_silver_1.png" type="Texture" id=25]
-[ext_resource path="res://Textures/acorn_silver_2.png" type="Texture" id=26]
-[ext_resource path="res://Textures/acorn_silver_3.png" type="Texture" id=27]
-[ext_resource path="res://Textures/acorn_silver_4.png" type="Texture" id=28]
-[ext_resource path="res://Textures/acorn_silver_5.png" type="Texture" id=29]
-[ext_resource path="res://Textures/acorn_silver_6.png" type="Texture" id=30]
-[ext_resource path="res://Textures/acorn_silver_7.png" type="Texture" id=31]
-[ext_resource path="res://Textures/acorn_diamond_0.png" type="Texture" id=32]
-[ext_resource path="res://Textures/acorn_diamond_1.png" type="Texture" id=33]
-[ext_resource path="res://Textures/acorn_diamond_2.png" type="Texture" id=34]
-[ext_resource path="res://Textures/acorn_diamond_3.png" type="Texture" id=35]
-[ext_resource path="res://Textures/acorn_diamond_4.png" type="Texture" id=36]
-[ext_resource path="res://Textures/acorn_diamond_5.png" type="Texture" id=37]
-[ext_resource path="res://Textures/acorn_diamond_6.png" type="Texture" id=38]
-[ext_resource path="res://Textures/acorn_diamond_7.png" type="Texture" id=39]
+[ext_resource path="res://Textures/acorns.png" type="Texture" id=8]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 7.89098
@@ -50,37 +19,165 @@ animations = [ {
 "name": "glow_diamond",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
-"loop": true,
-"name": "glow_silver",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 2 ), ExtResource( 3 ) ],
 "loop": true,
 "name": "glow_gold",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "glow_silver",
+"speed": 5.0
 } ]
 
-[sub_resource type="SpriteFrames" id=3]
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 8 )
+region = Rect2( 0, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 8 )
+region = Rect2( 10, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 8 )
+region = Rect2( 20, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 8 )
+region = Rect2( 30, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 8 )
+region = Rect2( 40, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 8 )
+region = Rect2( 50, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 8 )
+region = Rect2( 60, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 8 )
+region = Rect2( 70, 0, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 8 )
+region = Rect2( 0, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 8 )
+region = Rect2( 10, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 8 )
+region = Rect2( 20, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 8 )
+region = Rect2( 30, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=15]
+atlas = ExtResource( 8 )
+region = Rect2( 40, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=16]
+atlas = ExtResource( 8 )
+region = Rect2( 50, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=17]
+atlas = ExtResource( 8 )
+region = Rect2( 60, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 8 )
+region = Rect2( 70, 20, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 8 )
+region = Rect2( 0, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=20]
+atlas = ExtResource( 8 )
+region = Rect2( 10, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=21]
+atlas = ExtResource( 8 )
+region = Rect2( 20, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=22]
+atlas = ExtResource( 8 )
+region = Rect2( 30, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 8 )
+region = Rect2( 40, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=24]
+atlas = ExtResource( 8 )
+region = Rect2( 50, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=25]
+atlas = ExtResource( 8 )
+region = Rect2( 60, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=26]
+atlas = ExtResource( 8 )
+region = Rect2( 70, 10, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=27]
+atlas = ExtResource( 8 )
+region = Rect2( 0, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=28]
+atlas = ExtResource( 8 )
+region = Rect2( 10, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=29]
+atlas = ExtResource( 8 )
+region = Rect2( 20, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=30]
+atlas = ExtResource( 8 )
+region = Rect2( 30, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=31]
+atlas = ExtResource( 8 )
+region = Rect2( 40, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=32]
+atlas = ExtResource( 8 )
+region = Rect2( 50, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=33]
+atlas = ExtResource( 8 )
+region = Rect2( 60, 30, 10, 10 )
+
+[sub_resource type="AtlasTexture" id=34]
+atlas = ExtResource( 8 )
+region = Rect2( 70, 30, 10, 10 )
+
+[sub_resource type="SpriteFrames" id=35]
 animations = [ {
-"frames": [ ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ) ],
+"frames": [ SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ) ],
 "loop": true,
-"name": "acorn_gold",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ) ],
-"loop": true,
-"name": "acorn_normal",
+"name": "default",
 "speed": 8.0
 }, {
-"frames": [ ExtResource( 32 ), ExtResource( 33 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 36 ), ExtResource( 37 ), ExtResource( 38 ), ExtResource( 39 ) ],
+"frames": [ SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 14 ), SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ) ],
 "loop": true,
-"name": "acorn_diamond",
+"name": "gold",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ) ],
+"frames": [ SubResource( 19 ), SubResource( 20 ), SubResource( 21 ), SubResource( 22 ), SubResource( 23 ), SubResource( 24 ), SubResource( 25 ), SubResource( 26 ) ],
 "loop": true,
-"name": "acorn_silver",
+"name": "silver",
+"speed": 5.0
+}, {
+"frames": [ SubResource( 27 ), SubResource( 28 ), SubResource( 29 ), SubResource( 30 ), SubResource( 31 ), SubResource( 32 ), SubResource( 33 ), SubResource( 34 ) ],
+"loop": true,
+"name": "diamond",
 "speed": 5.0
 } ]
 
@@ -107,7 +204,6 @@ playing = true
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 5, 5 )
-frames = SubResource( 3 )
-animation = "acorn_normal"
+frames = SubResource( 35 )
 frame = 1
 playing = true
